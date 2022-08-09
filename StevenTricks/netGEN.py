@@ -1,5 +1,5 @@
 from net import headers
-from _dict import randomitem
+from dictur import randomitem
 
 
 def randomheader():
