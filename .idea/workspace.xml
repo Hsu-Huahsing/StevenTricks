@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2fa12923-93b3-4b85-9fb5-e7e1c30774be" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/StevenTricks/.spyproject/config/backups/.codestyle.ini.bak.icloud" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks/.spyproject/config/backups/.encoding.ini.bak.icloud" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks/.spyproject/config/backups/.vcs.ini.bak.icloud" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/_dict.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/dictur.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/netGEN.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/netGEN.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
