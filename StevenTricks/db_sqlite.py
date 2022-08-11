@@ -12,59 +12,60 @@ import sqlite3
 # 所有傳入的文件一律要自行加.db
 
 sqltype_dict = {
-    "text" : ["object" , "string" ] ,
-    "timestamp" : [ "M8" , 'datetime64[ns]' , 'pytz.FixedOffset(480)' ] ,
+    "text": ["object", "string"],
+    "timestamp": ["M8", 'datetime64[ns]', 'pytz.FixedOffset(480)'],
     # 用timestamp儲存才會在dataframe讀取的時候自動被轉換為日期格式，datetime也可以儲存但是讀取的時候只會是object格式
-    "numeric" : ["float32" , "Float32" , "float64" , "Float64" , "int64" , "Int64" , 'bool' ,'boolean' ] ,
+    "numeric": ["float32", "Float32", "float64", "Float64", "int64", "Int64", 'bool', 'boolean'],
 }
 
-def dbchange( path ):
+
+def dbchange(path):
     # 這裡的path一定要給完整路徑
-    if isdir( abspath( join( path , pardir ) ) ) is False :
-        print("Maked new dir ! =======================\n{}\n=======================================".format( abspath( join( path , pardir ) ) ) )
-        makedirs( abspath( join( path , pardir ) ) , exist_ok = True)
+    if isdir(abspath(join(path, pardir))) is False:
+        print("Maked new dir ! =======================\n{}\n=======================================".format(abspath(join(path, pardir))))
+        makedirs(abspath(join(path, pardir)), exist_ok=True)
     
     db_info = {
-        "info" : pd.DataFrame() ,
-        "dbname" : '' ,
-        "table_list" : [] ,
-        "tableadapter_list" : [] ,
-        "index_list" : [] ,
-        "view_list" : [] ,
+        "info": pd.DataFrame(),
+        "dbname": '',
+        "table_list": [],
+        "tableadapter_list": [],
+        "index_list": [],
+        "view_list": [],
         }
     
-    if isdir( path ) is True :
+    if isdir(path) is True:
         db_info["dbpath"] = path
         db_info["dbdir"] = path
         
     else :
-        global conn , cursor
-        conn = sqlite3.connect( path )
+        global conn, cursor
+        conn = sqlite3.connect(path)
         cursor = conn.cursor()
         
         db_info["dbpath"] = path
-        db_info["dbdir"] = dirname( path )
+        db_info["dbdir"] = dirname(path)
 
-        db_info["info"] = pd.read_sql( "select * from sqlite_master" , conn )
-        db_info["dbname"] = basename( path )
+        db_info["info"] = pd.read_sql("select * from sqlite_master", conn)
+        db_info["dbname"] = basename(path)
         
         info = db_info["info"]
         
-        db_info["table_list"] = info[ ( info["type"] == "table" ) & ~( info['name'].str.contains( '_' , regex = True , na = False) ) ]["name"]
-        db_info["tableadapter_list"] = info[ ( info["type"] == "table" ) & ( info['name'].str.contains( '_' , regex = True , na = False) ) ]["name"] 
-        db_info["index_list"] = info[ info["type"] == "index"]["name"]
-        db_info["view_list"] = info[ info["type"] == "view"]["name"]
+        db_info["table_list"] = info[(info["type"] == "table") & ~(info['name'].str.contains('_', regex=True, na=False))]["name"]
+        db_info["tableadapter_list"] = info[(info["type"] == "table") & (info['name'].str.contains('_', regex=True, na=False))]["name"]
+        db_info["index_list"] = info[info["type"] == "index"]["name"]
+        db_info["view_list"] = info[info["type"] == "view"]["name"]
         
-    db_info["db_list"] = PathWalk_df( db_info["dbdir"] , fileinclude = [".db"] , level = 0 )['path']
+    db_info["db_list"] = PathWalk_df(db_info["dbdir"], fileinclude=[".db"], level=0)['path']
     return db_info
 
 
-def tableinfo_dict( table ) :
+def tableinfo_dict(table):
     table_info = {
-        "info" : pd.DataFrame() ,
-        "dtype_dic" : {} ,
-        "columns" : [] ,
-        "col_date" : [] ,
+        "info": pd.DataFrame(),
+        "dtype_dic": {},
+        "columns": [],
+        "col_date": [],
         "pk" : None ,
         }
     

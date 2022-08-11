@@ -11,40 +11,43 @@ from os import makedirs, walk
 
 
 def MakeLog_series(start_dt, data_d, period=None, index=None):
-    if period == "day" :
+    if period == "day":
         period = data_d
-    elif period == "month" :
-        period = str( data_d ).rsplit( "-" , 1 )[0]
-    elif period == "year" :
-        period = str( data_d.year )
-    return pd.Series( { "write_dt" : start_dt , "data_d" : data_d , "period" : period , "index" : index } , dtype = 'object').dropna( how = "any" )
+    elif period == "month":
+        period = str(data_d).rsplit("-", 1)[0]
+    elif period == "year":
+        period = str(data_d.year)
+    return pd.Series({"write_dt": start_dt, "data_d": data_d, "period": period, "index": index}, dtype='object').dropna(how="any")
 
 
-def replace_series( series , std_dict , na = False , mode = "fuzz" ) :
+def replace_series(series, std_dict, na=False, mode="fuzz"):
     # series依照std_dict給定的對照表，去replace每一個值，std_dict只能是一對一的dict，取代的方式分為fuzz和exac兩個模式，exac比較快速但適用範圍較窄，fuzz適用範圍比較廣，但是比較慢，在可以預期的情況下盡量使用exac
     res = []
-    for key , value_list in std_dict.items() :
-        if isinstance( value_list , list) is False : value_list = [ value_list ]
-        value = '|'.join( map( re.escape , value_list ) )
+    for key, value_list in std_dict.items():
+        if isinstance(value_list, list) is False:
+            value_list = [value_list]
+        value = '|'.join(map(re.escape, value_list))
         # 一定要在|內的全部的條件都配對到，才會進行replace
-        if mode == 'exac' :
-            ind = series.map( lambda x : True if len( set( value_list ) ) == len( set( re.findall( value , x ) ) ) else False )
+        if mode == 'exac':
+            ind = series.map(lambda x: True if len(set(value_list)) == len(set(re.findall(value, x))) else False)
         # 只要|裡面其中一個條件有配對到，就會把值替換掉
-        elif mode == 'fuzz' :
-            ind = series.map( lambda x : True if re.search( value , x ) else False )
-        series[ ind ] = key
-        res.append( series[ ind ] )
-        series = series.drop( series[ ind ].index , axis = 0 )
-        if series.empty is True : break
+        elif mode == 'fuzz':
+            ind = series.map(lambda x: True if re.search(value, x) else False)
+        series[ind] = key
+        res.append(series[ind])
+        series = series.drop(series[ind].index, axis=0)
+        if series.empty is True:
+            break
 
-    if na is True : res.append( series )
-    return pd.concat( res , axis = 0 )
+    if na is True:
+        res.append(series)
+    return pd.concat(res, axis=0)
 
 
-def unique_series( series , mode = "" ) :
-    series = series.dropna( axis = 0 )
-    if mode in [ "timestamp" , "datetime64[ns]" , "timedelta64" ] :
-        series = series.map( lambda x : str( x.year ).split( "." )[0] )
+def unique_series(series, mode=""):
+    series = series.dropna( axis=0)
+    if mode in ["timestamp", "datetime64[ns]", "timedelta64"]:
+        series = series.map(lambda x: str(x.year).split(".")[0])
     return series.unique()
 
 
@@ -76,16 +79,16 @@ def dfrows_iter(df, colname_list, std_dict={}, nodropcol_list=[]):
         yield [key_list, res_df]
 
 
-def dateinterval_series( series , freq = "MS"):
-    date_range = pd.date_range( start = series.min() , end = series.max() , freq = 'MS' , inclusive = 'both' )
+def dateinterval_series(series, freq="MS"):
+    date_range = pd.date_range(start=series.min(), end=series.max(), freq='MS', inclusive='both')
     # "MS" "QS"
 
-    date_range = date_range.union( pd.date_range( date_range[0] - date_range.freq , periods = 1 , freq = date_range.freq ) )
-    date_range = date_range.union( pd.date_range( date_range[-1] + date_range.freq , periods = 1 , freq = date_range.freq ) )
+    date_range = date_range.union(pd.date_range(date_range[0] - date_range.freq, periods=1, freq=date_range.freq))
+    date_range = date_range.union(pd.date_range(date_range[-1] + date_range.freq, periods=1, freq=date_range.freq))
 
-    res = pd.cut( pd.to_datetime( series ) , bins = date_range , include_lowest = True , right = False )
-    res = res.map( lambda x : x.left.date )
-    return  res
+    res = pd.cut(pd.to_datetime(series), bins=date_range, include_lowest=True, right=False)
+    res = res.map(lambda x: x.left.date)
+    return res
 
 
 def list_union(list_tup):
@@ -103,7 +106,8 @@ def numinterval_series(series, std_list, label=None):
         res = res.map(lambda x: "{}~{}".format(x.left, x.right))
     return res
 
-def DfRenew(left = pd.DataFrame() , right = pd.DataFrame() ):
+
+def DfRenew(left=pd.DataFrame(), right=pd.DataFrame()):
     if right.empty is True:
         print(r"Empty right ... ")
         return left
@@ -113,11 +117,11 @@ def DfRenew(left = pd.DataFrame() , right = pd.DataFrame() ):
     if left.equals(right) is True:
         print(r"No difference ...")
         return left
-    left.update(right , overwrite = True)
+    left.update(right, overwrite=True)
     newcol = [i for i in right.columns if i not in left.columns]
     dupcol = [i for i in right.columns if i in left.columns]
-    left = pd.concat([left , right.loc[~right.index.isin(left.index) ] , dupcol] )
-    left = pd.concat([left , right.loc[ : , newcol] ] , axis = 1 )
+    left = pd.concat([left, right.loc[~right.index.isin(left.index)], dupcol])
+    left = pd.concat([left, right.loc[:, newcol]], axis=1)
     return left
 
 
