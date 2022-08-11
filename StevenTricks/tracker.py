@@ -3,6 +3,7 @@ from os import stat
 from datetime import datetime
 import pandas as pd
 
+
 class tracer:
     def __init__(self, path):
         self.path = path
@@ -33,15 +34,11 @@ class tracer:
                 self.file_dir = path
 
     def report(self):
-        return pd.DataFrame(self.__dict__)
+        return pd.DataFrame(self.__dict__, index=[0])
 
-# splitext(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/dreamland/StevenTricks/dfi.py')[0]
-a = tracer(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/dreamland/StevenTricks/dfi.py')
-a.report()
-a.file_name
-a.file
-a.file_ext
-a.__dict__
+
+
+
 
 if __name__ == '__main__':
     pass
