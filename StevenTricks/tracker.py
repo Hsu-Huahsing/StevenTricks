@@ -4,12 +4,12 @@ from datetime import datetime
 import pandas as pd
 
 
-class tracer:
+class PathSweeper:
     def __init__(self, path):
         self.path = path
         self.file_dir = None
         self.file = None
-        self.file_exist = False
+        self.file_exists = False
         self.file_dirname = None
         self.file_name = None
         self.file_ext = None
@@ -22,7 +22,7 @@ class tracer:
         if exists(path) is True:
             if isfile(path) is True:
                 temp_stat = stat(path)
-                self.file_exist = True
+                self.file_exists = True
                 self.file = basename(path)
                 self.file_dir = dirname(path)
                 self.file_dirname = basename(self.file_dir)
@@ -34,10 +34,15 @@ class tracer:
                 self.file_dir = path
 
     def report(self):
-        return pd.DataFrame(self.__dict__, index=[0])
+        # report in series type, because it could be convenient to concat with other series
+        return pd.Series(self.__dict__)
 
 
-
+class tracer():
+    def __init__(self, log_path):
+        self.log_path = log_path
+        self.log_stat = PathSweeper(log_path)
+        self.log_exists = self.log_stat.file_exists
 
 
 if __name__ == '__main__':
