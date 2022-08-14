@@ -38,7 +38,7 @@ def dbchange(path):
         db_info["dbpath"] = path
         db_info["dbdir"] = path
         
-    else :
+    else:
         global conn, cursor
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
@@ -66,61 +66,62 @@ def tableinfo_dict(table):
         "dtype_dic": {},
         "columns": [],
         "col_date": [],
-        "pk" : None ,
+        "pk": None,
         }
     
-    info = pd.read_sql("PRAGMA table_info('{}') ".format( table ) , conn )
+    info = pd.read_sql("PRAGMA table_info('{}') ".format(table), conn)
     table_info["info"] = info
-    table_info["dtype_dic"] = dict( table_info["info"].loc[ : , ["name" , "type"] ].values )
+    table_info["dtype_dic"] = dict(table_info["info"].loc[:, ["name", "type"]].values)
     table_info["columns"] = info['name']
-    table_info["col_date"] = info.loc[ info["type"].isin( [ "TIMESTAMP" , "DATE" , "timestamp" , "date" ] ) , "name"].tolist()
-    if info.loc[ info["pk"] > 0 , "name" ].empty is False :
-        table_info["pk"] = info.loc[ info["pk"] > 0 , "name"].tolist()
+    table_info["col_date"] = info.loc[info["type"].isin(["TIMESTAMP", "DATE", "timestamp", "date"]), "name"].tolist()
+    if info.loc[info["pk"] > 0, "name"].empty is False:
+        table_info["pk"] = info.loc[info["pk"] > 0, "name"].tolist()
     return table_info
 
 
-def addcols_df( df , table ) :
-    df = df.dropna( axis = 1 , how = "all" ).convert_dtypes()
-    tableinfo = tableinfo_dict( table )
-    df = df.loc[ : , [ _ for _ in df if _ not in tableinfo['columns'].values ] ]
-    if df.empty is True : return
-    dtype_series = dtypes_df( df )
-    dtype_series = replace_series( dtype_series , sqltype_dict , True , "fuzz" )
-    for col in df :
-        sql = "alter table '{t}' add '{n}' {d}".format( t = table , n = col , d = dtype_series[col] )
-        try :
-            cursor.execute( sql )
-        except :
-            print( sql )
-            cursor.execute( sql )
+def addcols_df(df, table):
+    df = df.dropna(axis=1, how="all").convert_dtypes()
+    tableinfo = tableinfo_dict(table)
+    df = df.loc[:, [_ for _ in df if _ not in tableinfo['columns'].values]]
+    if df.empty is True:
+        return
+    dtype_series = dtypes_df(df)
+    dtype_series = replace_series(dtype_series, sqltype_dict, True, "fuzz")
+    for col in df:
+        sql = "alter table '{t}' add '{n}' {d}".format(t=table, n=col, d=dtype_series[col])
+        try:
+            cursor.execute(sql)
+        except:
+            print(sql)
+            cursor.execute(sql)
 
 
-def addtable_df( df , table , pk = [] , autotime = False , notnullkey = [] , uniquekey = [] , fktable = "" , fk = [] ) :
-    df = df.dropna( axis = 1 , how = "all" )
-    dtype_series = dtypes_df( df )
-    dtype_series = replace_series( dtype_series , sqltype_dict , True , "fuzz" )
+def addtable_df(df, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], fktable="", fk=[]):
+    df = df.dropna(axis=1, how="all")
+    dtype_series = dtypes_df(df)
+    dtype_series = replace_series(dtype_series, sqltype_dict, True, "fuzz")
     # print(dtype_series)
-    dtype_dic = { colname : " '{colname}' {dtype} ".format( colname = colname , dtype = dtype ) for colname , dtype in dtype_series.items() }
+    dtype_dic = {colname: " '{colname}' {dtype} ".format(colname=colname, dtype=dtype) for colname, dtype in dtype_series.items()}
     
     constraint_dic = {
-        " not null " : notnullkey ,
-        " unique "   : uniquekey  ,
+        " not null ": notnullkey,
+        " unique ": uniquekey,
         }
     
-    if [ _ for _ in pk if _ in df ] != pk or not pk :
+    if [_ for _ in pk if _ in df] != pk or not pk:
         # 填入的pk如果沒有完全在df裏面就直接用auto_pk
         dtype_dic["Auto_pk"] = "Auto_pk integer primary key autoincrement"
         pk = ""
-    else :
+    else:
         pk = r",PRIMARY KEY({})".format( ",".join( pk ) )
     
     if autotime is True :
         autotime = ',start_dt timestamp default (datetime(current_timestamp,\'localtime\'))'
         # ',Write_dt timestamp default current_timestamp not null'
-    elif autotime is False :
+    elif autotime is False:
         autotime = ''
         
-    if [ _ for _ in fk if _ in df ] != fk or not fk or fktable == "" :
+    if [_ for _ in fk if _ in df ] != fk or not fk or fktable == "" :
         fk = ''
     else :
         fk = r",CONSTRAINT fk_{fktable} FOREIGN KEY ({fk}) REFERENCES '{fktable}'({fk})".format( fk = ",".join( fk ) , fktable = fktable )

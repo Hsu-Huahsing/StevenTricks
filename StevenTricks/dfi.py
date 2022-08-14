@@ -10,14 +10,6 @@ from os.path import join, split
 from os import makedirs, walk
 
 
-def MakeLog_series(start_dt, data_d, period=None, index=None):
-    if period == "day":
-        period = data_d
-    elif period == "month":
-        period = str(data_d).rsplit("-", 1)[0]
-    elif period == "year":
-        period = str(data_d.year)
-    return pd.Series({"write_dt": start_dt, "data_d": data_d, "period": period, "index": index}, dtype='object').dropna(how="any")
 
 
 def replace_series(series, std_dict, na=False, mode="fuzz"):

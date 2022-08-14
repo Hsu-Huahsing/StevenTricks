@@ -1,6 +1,6 @@
 from os.path import exists, isfile, basename, dirname, isdir, splitext
 from os import stat
-from datetime import datetime
+from datetime import datetime, date
 import pandas as pd
 
 
@@ -38,11 +38,18 @@ class PathSweeper:
         return pd.Series(self.__dict__)
 
 
-class tracer():
-    def __init__(self, log_path):
-        self.log_path = log_path
-        self.log_stat = PathSweeper(log_path)
-        self.log_exists = self.log_stat.file_exists
+def logmaker(write_dt, data_dt, period=None, index=None):
+    # write_dt就是寫入當下的時間點
+    # data_dt就是資料的時間
+    # period就是資料的更新週期，目前支援日、月、年
+    # index就是項目的名字
+    if period == "day":
+        period = data_dt
+    elif period == "month":
+        period = str(data_dt).rsplit("-", 1)[0]
+    elif period == "year":
+        period = str(data_dt.year)
+    return pd.Series({"write_dt": write_dt, "data_dt": data_dt, "period": period, "index": index}, dtype='object').dropna(how="any")
 
 
 if __name__ == '__main__':
