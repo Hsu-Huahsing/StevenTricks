@@ -2,7 +2,9 @@ from os.path import exists, isfile, basename, dirname, isdir, splitext
 from os import stat
 from datetime import datetime, date
 import pandas as pd
-
+a =pd.Series([1])
+b=pd.Series([2])
+pd.concat([a,b],axis=1).dropna(how='any')
 
 class PathSweeper:
     def __init__(self, path):
@@ -38,7 +40,8 @@ class PathSweeper:
         return pd.Series(self.__dict__)
 
 
-def logmaker(write_dt, data_dt, period=None, index=None):
+def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'),  period=None, index=None):
+    # log就是額外想要加入的資訊，格式固定是series
     # write_dt就是寫入當下的時間點
     # data_dt就是資料的時間
     # period就是資料的更新週期，目前支援日、月、年
@@ -49,7 +52,8 @@ def logmaker(write_dt, data_dt, period=None, index=None):
         period = str(data_dt).rsplit("-", 1)[0]
     elif period == "year":
         period = str(data_dt.year)
-    return pd.Series({"write_dt": write_dt, "data_dt": data_dt, "period": period, "index": index}, dtype='object').dropna(how="any")
+    return pd.concat([pd.Series({"write_dt": write_dt, "data_dt": data_dt, "period": period, "index": index}, dtype='object'),
+                      log], axis=1).dropna(how="any")
 
 
 if __name__ == '__main__':
