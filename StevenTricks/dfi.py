@@ -10,8 +10,6 @@ from os.path import join, split
 from os import makedirs, walk
 
 
-
-
 def replace_series(series, std_dict, na=False, mode="fuzz"):
     # series依照std_dict給定的對照表，去replace每一個值，std_dict只能是一對一的dict，取代的方式分為fuzz和exac兩個模式，exac比較快速但適用範圍較窄，fuzz適用範圍比較廣，但是比較慢，在可以預期的情況下盡量使用exac
     res = []

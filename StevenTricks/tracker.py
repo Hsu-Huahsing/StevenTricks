@@ -2,9 +2,7 @@ from os.path import exists, isfile, basename, dirname, isdir, splitext
 from os import stat
 from datetime import datetime, date
 import pandas as pd
-a =pd.Series([1])
-b=pd.Series([2])
-pd.concat([a,b],axis=1).dropna(how='any')
+
 
 class PathSweeper:
     def __init__(self, path):
@@ -53,7 +51,7 @@ def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'),  period=None, ind
     elif period == "year":
         period = str(data_dt.year)
     return pd.concat([pd.Series({"write_dt": write_dt, "data_dt": data_dt, "period": period, "index": index}, dtype='object'),
-                      log], axis=1).dropna(how="any")
+                      log], axis=1).dropna(how="any", axis=1)
 
 
 if __name__ == '__main__':
