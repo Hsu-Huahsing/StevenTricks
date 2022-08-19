@@ -113,7 +113,7 @@ def addtable_df(df, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], f
         dtype_dic["Auto_pk"] = "Auto_pk integer primary key autoincrement"
         pk = ""
     else:
-        pk = r",PRIMARY KEY({})".format( ",".join( pk ) )
+        pk = r",PRIMARY KEY({})".format(",".join(pk))
     
     if autotime is True :
         autotime = ',start_dt timestamp default (datetime(current_timestamp,\'localtime\'))'
@@ -121,69 +121,72 @@ def addtable_df(df, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], f
     elif autotime is False:
         autotime = ''
         
-    if [_ for _ in fk if _ in df ] != fk or not fk or fktable == "" :
+    if [_ for _ in fk if _ in df] != fk or not fk or fktable == "":
         fk = ''
     else :
-        fk = r",CONSTRAINT fk_{fktable} FOREIGN KEY ({fk}) REFERENCES '{fktable}'({fk})".format( fk = ",".join( fk ) , fktable = fktable )
+        fk = r",CONSTRAINT fk_{fktable} FOREIGN KEY ({fk}) REFERENCES '{fktable}'({fk})".format(fk=",".join(fk), fktable=fktable)
         
-    for constraint , key_list in constraint_dic.items() :
-        for key in key_list :
-            if key in pk : continue
-            if key not in df : continue
+    for constraint, key_list in constraint_dic.items():
+        for key in key_list:
+            if key in pk:
+                continue
+            if key not in df:
+                continue
             dtype_dic[key] += constraint
-    sql = "create table if not exists '{tablename}'({colinfo}{autotime}{pk}{fk}) ".format( tablename = table , colinfo = ",".join( dtype_dic.values() ) , autotime = autotime , pk = pk , fk = fk )
-    try :
+    sql = "create table if not exists '{tablename}'({colinfo}{autotime}{pk}{fk}) ".format(tablename=table, colinfo=",".join(dtype_dic.values()), autotime=autotime, pk=pk, fk=fk)
+    try:
         cursor.execute(sql)
-    except :
+    except:
         print(sql)
         cursor.execute(sql)
 
 
-def tosql_df( df , dbpath , table , pk = [] , autotime = False , notnullkey = [] , uniquekey = [] , fktable = ""  , fk = [] ) :
+def tosql_df(df, dbpath, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], fktable="", fk=[]):
     # autotime就是在table裡面增加一個欄位，那個欄位會在資料新增的時候自動新增資料寫入的時間，通常是用在log紀錄寫入的瞬間自動新增一個時間欄位，精準到秒
     # dbpath一定要指定到檔名，且包含副檔名.db
     # only for the insert df into table without any condition
     # 如果要保留就是使用update(只更新有變動的部分)，如果不保留就是用replace into，這樣就會把有變動的部分放進去，其餘清空
-    df = df.dropna( axis = 1 , how = "all" )
-    db_info = dbchange( dbpath )
-    if table not in db_info['table_list'].tolist() and table not in db_info['tableadapter_list'].tolist() :
-    # 如果這個table不存在就導入addtable去新增一個table
-        addtable_df( df , table , pk , autotime , notnullkey , uniquekey , fktable , fk )
-    else :
-    # 如果這個table存在，就檢查column需不需要新增
-        addcols_df( df , table )
-    table_info = tableinfo_dict( table )
+    df = df.dropna(axis=1, how="all")
+    db_info = dbchange(dbpath)
+    if table not in db_info['table_list'].tolist() and table not in db_info['tableadapter_list'].tolist():
+        # 如果這個table不存在就導入addtable去新增一個table
+        addtable_df(df, table, pk, autotime, notnullkey, uniquekey, fktable, fk)
+    else:
+        # 如果這個table存在，就檢查column需不需要新增
+        addcols_df(df, table)
+    table_info = tableinfo_dict(table)
     
-    df = df.astype( str ).replace( { "<NA>" : np.nan } )
-    sql = "insert or ignore into '{table}'('{cols}')  values({values})".format( table = table , cols = "','".join( df.columns ) , values = ",".join( [ "datetime(?)" if _ in table_info["col_date"] else "?" for  _ in df.columns ] ) )
-    try :
-        cursor.executemany( sql , df.values )
-    except :
-        print( sql )
-        cursor.executemany( sql , df.values )
+    df = df.astype(str).replace({"<NA>": np.nan})
+    sql = "insert or ignore into '{table}'('{cols}')  values({values})".format(table=table, cols="','".join(df.columns), values=",".join(["datetime(?)" if _ in table_info["col_date"] else "?" for _ in df.columns]))
+    try:
+        cursor.executemany(sql, df.values)
+    except:
+        print(sql)
+        cursor.executemany(sql, df.values)
     conn.commit()
     
-    if "Auto_pk" not in  table_info[ "pk" ] :
-        sql = "update '{table}' set {value} where {pkvalue}".format( table = table , value = ",".join( [ "'{c}'=datetime(?)".format(c = c) if c in table_info["col_date"] else "'{c}'=?".format( c = c ) for c in df.columns if c not in table_info["pk"] ] ) , pkvalue = " and ".join( [ '{}=datetime(?)'.format( _ )  if _  in table_info["col_date"] else '{}=?'.format( _ ) for _ in table_info["pk"] ] ) )
-        try :
-            cursor.executemany( sql , [ a + b for a , b in zip( df.drop( table_info["pk"] , axis = 1 ).values.tolist() , df[table_info["pk"] ].values.tolist() ) ] )
-        except :
+    if "Auto_pk" not in table_info["pk"]:
+        sql = "update '{table}' set {value} where {pkvalue}".format(table=table, value=",".join(["'{c}'=datetime(?)".format(c=c) if c in table_info["col_date"] else "'{c}'=?".format(c=c) for c in df.columns if c not in table_info["pk"]]), pkvalue=" and ".join(['{}=datetime(?)'.format(_) if _ in table_info["col_date"] else '{}=?'.format(_) for _ in table_info["pk"]]))
+        try:
+            cursor.executemany(sql, [a + b for a, b in zip(df.drop(table_info["pk"], axis=1).values.tolist(), df[table_info["pk"]].values.tolist())])
+        except:
             print(sql)
-            cursor.executemany( sql , [ a + b for a , b in zip( df.drop( table_info["pk"] , axis = 1 ).values.tolist() , df[ table_info["pk"] ].values.tolist() ) ] )
+            cursor.executemany(sql, [a + b for a, b in zip(df.drop(table_info["pk"], axis=1).values.tolist(), df[table_info["pk"]].values.tolist())])
         conn.commit()
 
 
-def tosqladapter_df( df , dbpath , table , adaptertable , adapter_col , pk = [] , adapter_pk = [] , autotime = False , notnullkey = [] , uniquekey = [] ) :
+def tosqladapter_df(df, dbpath, table, adaptertable, adapter_col, pk=[], adapter_pk=[], autotime=False, notnullkey=[], uniquekey=[]):
     # tablename is specify a col to seperate df into pieces
     # adapter_col and adapter_pk is only for the adapter table
     # pk is for original df and adapter_pk is mostly "auto_pk" , because only a few situation that adapter table has not duplicate column
-    adapter_df = df.loc[ : , [ _ for _ in adapter_col + pk if _ in df ] ]
-    tosql_df( adapter_df , dbpath , "{t}_{p}".format( t = table , p =  adaptertable ) , adapter_pk , autotime , notnullkey , uniquekey , table , pk  )
+    adapter_df = df.loc[:, [_ for _ in adapter_col + pk if _ in df]]
+    tosql_df(adapter_df, dbpath, "{t}_{p}".format(t=table, p=adaptertable), adapter_pk, autotime, notnullkey, uniquekey, table, pk)
     
-    df = df.sort_values( pk , ascending = True )
-    if pk : df = df.drop_duplicates(subset = pk , keep = "last" )
-    df = df.drop( adapter_col , axis = 1)
-    tosql_df( df , dbpath , table , pk , autotime , notnullkey , uniquekey )
+    df = df.sort_values(pk, ascending=True)
+    if pk:
+        df = df.drop_duplicates(subset=pk, keep="last")
+    df = df.drop(adapter_col, axis=1)
+    tosql_df(df, dbpath, table, pk, autotime, notnullkey, uniquekey)
 
 
 def readsql_iter(dbpath, db_list=[], table_list=[], table_exclude=[], adapter=True, db_col=False, table_col=False, ind_col=None, chunksize=None):
@@ -205,7 +208,7 @@ def readsql_iter(dbpath, db_list=[], table_list=[], table_exclude=[], adapter=Tr
         if not table_list:
             Table_list = db_info['table_list'].tolist()
             # 因為db_inifo裡面的資訊全部都是用Series，所以這裡要轉乘list才能直接用if去判斷
-        else :
+        else:
             Table_list = [str(_) for _ in table_list if str(_) in db_info['table_list'].values]
             # 這裡用str(_)下去比對，是為了確保就算給的是數字(2021、2022)也能比對到
             # pd.Series 不支援用 X in db_info['table_list'] 的方式去比對裡面的value，所以如果要用in去比對的話，要先把後面加.values，才能用in去比對，但是用for loop 去迭代是可以把全部的value迭代出來
