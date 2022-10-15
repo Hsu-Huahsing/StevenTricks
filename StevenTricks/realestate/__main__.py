@@ -94,7 +94,7 @@ if __name__ == '__main__':
                     print(res)
 
     elif workdir.proj_dict['dir'] in ['ActualPrice']:
-        from StevenTricks import AP_input
+        from StevenTricks.realestate.clean import AP_input
         adm = next(workdir.crosswalk_iter())
         source_df = PathWalk_df(workdir.source_path, level=0)
         for sourcepath in source_df['path']:
@@ -133,7 +133,7 @@ if __name__ == '__main__':
             db.conn.close()
 
     elif workdir.proj_dict['dir'] in ['Examin']:
-        from StevenTricks import Examin_input
+        from StevenTricks.realestate.clean import Examin_input
         source_df = PathWalk_df(workdir.source_path, level=0)
         for sourcepath in source_df['path']:
             filename_ext = basename(sourcepath)
@@ -145,7 +145,7 @@ if __name__ == '__main__':
         db.conn.close()
 
     elif workdir.proj_dict['dir'] in ['Valuer']:
-        from StevenTricks import Valuer_input
+        from StevenTricks.realestate.clean import Valuer_input
 
         if workdir.proj_dict['type'] in ['all']:
             source_df = PathWalk_df(workdir.source_path, fileexclude=['buy', 'full'])
@@ -178,7 +178,7 @@ if __name__ == '__main__':
         db.conn.close()
 
     elif workdir.proj_dict['dir'] in ['GreenHouse']:
-        from StevenTricks import GH_input
+        from StevenTricks.realestate.clean import GH_input
         source_df = PathWalk_df(workdir.source_path, level=0)
 
         adm = next(workdir.crosswalk_iter())
