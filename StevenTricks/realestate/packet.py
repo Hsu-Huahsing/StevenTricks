@@ -148,6 +148,7 @@ class Workdir:
     # source_df = None
     used_path = None
     # dbname = None
+    # source_path和used_path是根據self.path而來，self.path就是飲用db_path
 
     def __init__(self):
         num_dict = {}

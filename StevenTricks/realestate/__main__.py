@@ -20,8 +20,8 @@ if __name__ == '__main__':
     Workdir = Workdir()
 
     if Workdir.proj_dict['dir'] in ['Agent']:
-        from StevenTricks import webdata_crawl
-        from StevenTricks import Agent_input
+        from StevenTricks.realestate.Ubee import webdata_crawl
+        from StevenTricks.realestate.clean import Agent_input
 
         adm = next(Workdir.crosswalk_iter())
         log_series = Workdir.log_series()
@@ -35,7 +35,7 @@ if __name__ == '__main__':
             df = pd.DataFrame(webdata['data'])
             df = Agent_input(df)
             df = pd.merge(df, adm, on=['ZIP'], how='left')
-            log_series = pd.Series({'writetime': datetime.now(), 'writedate': date.today(), 'freq': 'month', 'totalpage': webdata['pager']['pages'], 'currentpage': webdata['pager']['page'], 'ZIP': webdata['ZIP'], 'type': Workdir.proj_dict['type']})])
+            log_series = pd.Series({'writetime': datetime.now(), 'writedate': date.today(), 'freq': 'month', 'totalpage': webdata['pager']['pages'], 'currentpage': webdata['pager']['page'], 'ZIP': webdata['ZIP'], 'type': Workdir.proj_dict['type']})
             for df_chunk in dfrows_iter(df, ['Created_DATE', 'COUNTYCODE'], db.sqltype_dict):
                 db.tosqladapter_df(df_chunk[1], join(Workdir.path, Workdir.proj_dict['type'], df_chunk[0][0]+'.db'), df_chunk[0][1], 'price', ['Updated_DATE', 'AgentPrice', 'BUILD_FLRPRC'], ['title'], ['title', 'Updated_DATE'])
             db.tosql_df(log_series.to_frame().T, Workdir.logpath, Workdir.proj_dict['dir'], ['type', 'period'], True)
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     elif Workdir.proj_dict['dir'] in ['ActualPrice']:
         from StevenTricks.realestate.clean import AP_input
-        adm = next(Workdir.crosswalk_iter())
+        # adm = next(Workdir.crosswalk_iter())
         source_df = PathWalk_df(Workdir.source_path, level=0)
         for sourcepath in source_df['path']:
             # 對每一個.xlsm檔案做迭代，下面對整個excel表內的資料作統一整理
