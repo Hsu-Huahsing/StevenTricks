@@ -37,8 +37,10 @@ def Agent_input(df):
         df.loc[:, 'BDTYPE_DETL'] = df['BDTYPE_DETL'].replace(flat(Value_dict['BDTYPE_DETL']), regex=True)
     return df
 
+# def AP_input(df, sheet, filename_ext, adm_std):
 
-def AP_input(df, sheet, filename_ext, adm_std):
+
+def AP_input(df, sheet, filename_ext):
     print('<FileName>{}<SheetName>{}'.format(filename_ext, sheet))
     sheet = sheet.split('_', 1)[0]
     if 'lvr' in filename_ext:
@@ -51,9 +53,9 @@ def AP_input(df, sheet, filename_ext, adm_std):
     if sheet in ['不動產買賣', '預售屋買賣', '不動產租賃']:
         df.insert(0, 'FileName', splitext(filename_ext)[0])
         df = df.replace(ValueReplace_dict, regex=True)
-        df.loc[:, 'TOWNCODE'] = df.loc[:, 'TOWNNAME'].map(lambda x: adm_std[x] if pd.isnull(x) is False else x)
-        df.loc[df['TOWNNAME'].isnull(), 'TOWNCODE'] = replace_series( series=df.loc[ df['TOWNNAME'].isnull(), 'GUSTRE' ], std_dict=adm_std, mode = 'exac' )
-        df = df.drop(['TOWNNAME'], axis=1, errors='ignore')
+        # df.loc[:, 'TOWNCODE'] = df.loc[:, 'TOWNNAME'].map(lambda x: adm_std[x] if pd.isnull(x) is False else x)
+        # df.loc[df['TOWNNAME'].isnull(), 'TOWNCODE'] = replace_series(series=df.loc[df['TOWNNAME'].isnull(), 'GUSTRE'], std_dict=adm_std, mode='exac')
+        # df = df.drop(['TOWNNAME'], axis=1, errors='ignore')
     
     if sheet in DATE_mode['ActualPrice']:
         templist = [_ for _ in ['DATE', 'FNSH_DATE'] if _ in df]
