@@ -41,9 +41,9 @@ if __name__ == '__main__':
             db.tosql_df(log_series.to_frame().T, workdir.logpath, workdir.proj_dict['dir'], ['type', 'period'], True)
             print(log_series)
 
-    elif workdir.proj_dict['dir'] in ['ForeClosure']:
-        from StevenTricks import webdata_crawl
-        from StevenTricks import FC_input
+    elif Workdir.proj_dict['dir'] in ['ForeClosure']:
+        from StevenTricks.realestate.FC import webdata_crawl
+        from StevenTricks.realestate.clean import FC_input
 
         adm = next(workdir.crosswalk_iter())
 
