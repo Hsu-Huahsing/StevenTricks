@@ -96,13 +96,14 @@ if __name__ == '__main__':
     elif Workdir.proj_dict['dir'] in ['ActualPrice']:
         from StevenTricks.realestate.clean import AP_input
         # adm = next(Workdir.crosswalk_iter())
-        source_df = PathWalk_df(Workdir.source_path, level=0)
+        source_df = PathWalk_df(Workdir.source_path, level=2)
         for sourcepath in source_df['path']:
             # 對每一個.xlsm檔案做迭代，下面對整個excel表內的資料作統一整理
             filename_ext = basename(sourcepath)
             for vocab, county in APfilename_dict.items():
                 if 'list_' + vocab in filename_ext or vocab + '_lvr' in filename_ext:
                     break
+            #         利用for的方式找出vocab和county停在哪裡，就知道這個檔案是位於哪個區域
             # adm_std = dict(adm.loc[adm['COUNTYCODE'] == county, ['TOWNNAME', 'TOWNCODE']].values)
         # 取得該檔案所位於的county，並將adm鎖定在特定區域，取得adm_std
             df_dict = pd.read_excel(io=sourcepath, sheet_name=None)
