@@ -2,10 +2,10 @@
 # import sys
 # sys.path
 
-from StevenTricks import db_sqlite as db
+from StevenTricks import dbsqlite as db
 from StevenTricks.fileop import PathWalk_df, xlstoxlsx
-from StevenTricks.dfi import dfrows_iter, MakeLog_series
-from StevenTricks import Workdir, APfilename_dict
+from StevenTricks.dfi import dfrows_iter
+from StevenTricks.realestate.packet import Workdir, APfilename_dict
 
 from os.path import join, basename, splitext
 from os import replace
@@ -35,8 +35,7 @@ if __name__ == '__main__':
             df = pd.DataFrame(webdata['data'])
             df = Agent_input(df)
             df = pd.merge(df, adm, on=['ZIP'], how='left')
-            log_series = MakeLog_series(datetime.now(), date.today(), 'month')
-            log_series = pd.concat([log_series, pd.Series({'totalpage': webdata['pager']['pages'], 'currentpage': webdata['pager']['page'], 'ZIP': webdata['ZIP'], 'type': workdir.proj_dict['type']})])
+            log_series = pd.Series({'writetime': datetime.now(), 'writedate': date.today(), 'freq': 'month', 'totalpage': webdata['pager']['pages'], 'currentpage': webdata['pager']['page'], 'ZIP': webdata['ZIP'], 'type': workdir.proj_dict['type']})])
             for df_chunk in dfrows_iter(df, ['Created_DATE', 'COUNTYCODE'], db.sqltype_dict):
                 db.tosqladapter_df(df_chunk[1], join(workdir.path, workdir.proj_dict['type'], df_chunk[0][0]+'.db'), df_chunk[0][1], 'price', ['Updated_DATE', 'AgentPrice', 'BUILD_FLRPRC'], ['title'], ['title', 'Updated_DATE'])
             db.tosql_df(log_series.to_frame().T, workdir.logpath, workdir.proj_dict['dir'], ['type', 'period'], True)

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from StevenTricks.snt import tonumeric_int , changetype_stringtodate
-from StevenTricks.dfi import replace_series , flat_dict
-from StevenTricks import colname_dic , DATE_mode , ValueReplace_dict , chnum_dict , Value_dict
+from StevenTricks.snt import tonumeric_int, changetype_stringtodate
+from StevenTricks.dfi import replace_series
+from StevenTricks.dictur import flat
+from StevenTricks import colname_dic, DATE_mode, ValueReplace_dict, chnum_dict, Value_dict
 
 from os.path import splitext
 
@@ -31,7 +32,7 @@ def Agent_input( df ) :
     if 'BDTYPE_DETL' in df:
         if 'USESCOPE_DETL' in df : 
             df.loc[ : , 'BDTYPE_DETL' ] = df[ 'BDTYPE_DETL' ] + ',' + df[ 'USESCOPE_DETL' ]
-        df.loc[ : , 'BDTYPE_DETL' ] = df['BDTYPE_DETL'].replace( flat_dict( Value_dict['BDTYPE_DETL'] ) , regex = True )
+        df.loc[ : , 'BDTYPE_DETL' ] = df['BDTYPE_DETL'].replace(flat( Value_dict['BDTYPE_DETL'] ) , regex = True )
     return df
 
 

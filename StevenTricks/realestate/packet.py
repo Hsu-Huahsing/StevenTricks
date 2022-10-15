@@ -5,8 +5,8 @@ Created on Mon Jan 17 15: 58: 55 2022
 @author: 118939
 """
 
-from StevenTricks import db_path
-from StevenTricks import db_sqlite as db
+from StevenTricks.realestate.conf import db_path
+from StevenTricks import dbsqlite as db
 from os.path import join, isfile
 from os import makedirs
 from datetime import date
