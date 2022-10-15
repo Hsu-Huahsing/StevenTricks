@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+# import sys
+# sys.path
+
 from StevenTricks import db_sqlite as db
 from StevenTricks.fileop import PathWalk_df, xlstoxlsx
 from StevenTricks.dfi import dfrows_iter, MakeLog_series
