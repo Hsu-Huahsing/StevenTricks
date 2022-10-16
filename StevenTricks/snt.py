@@ -69,12 +69,12 @@ def TenPercentile_to_int(char, errors="raise", local="en_US.UTF-8"):
 
 def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
     def mode2(series):
-        series = series.str.split("年|月|日", expand=True).rename(columns={0: "year", 1: "month", 2: "day"})
-        print('ok')
-        print(series)
-        series.loc[:, "year"] = (pd.to_numeric(series.loc[:, "year"], downcast="integer", errors='coerce') + 1911).astype(str)
-        series = pd.to_datetime(series.loc[:, ["year", "month", "day"]], errors="coerce", infer_datetime_format=True)
-        return series
+        result = series.str.split("年|月|日", expand=True).rename(columns={0: "year", 1: "month", 2: "day"})
+        if '年' not in result or '月' not in result or '日' not in result:
+            return series
+        result.loc[:, "year"] = (pd.to_numeric(result.loc[:, "year"], downcast="integer", errors='coerce') + 1911).astype(str)
+        result = pd.to_datetime(result.loc[:, ["year", "month", "day"]], errors="coerce", infer_datetime_format=True)
+        return result
     
     def mode3(series):
         series = series.str.split("-", expand=True).rename(columns={0: "month", 1: "year"}).reindex(columns=['year', 'month'])

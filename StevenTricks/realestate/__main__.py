@@ -99,6 +99,7 @@ if __name__ == '__main__':
         # adm = next(Workdir.crosswalk_iter())
         source_df = PathWalk_df(Workdir.source_path, fileinclude=['.xls'], level=1)
         for sourcepath in source_df['path']:
+            print(sourcepath)
             # 對每一個.xlsm檔案做迭代，下面對整個excel表內的資料作統一整理
             filename_ext = basename(sourcepath)
             for vocab, county in APfilename_dict.items():
