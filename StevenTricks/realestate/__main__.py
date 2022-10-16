@@ -96,7 +96,7 @@ if __name__ == '__main__':
     elif Workdir.proj_dict['dir'] in ['ActualPrice']:
         from StevenTricks.realestate.clean import AP_input
         # adm = next(Workdir.crosswalk_iter())
-        source_df = PathWalk_df(Workdir.source_path, level=2)
+        source_df = PathWalk_df(Workdir.source_path, level=1)
         for sourcepath in source_df['path']:
             # 對每一個.xlsm檔案做迭代，下面對整個excel表內的資料作統一整理
             filename_ext = basename(sourcepath)
@@ -106,7 +106,10 @@ if __name__ == '__main__':
             #         利用for的方式找出vocab和county停在哪裡，就知道這個檔案是位於哪個區域
             # adm_std = dict(adm.loc[adm['COUNTYCODE'] == county, ['TOWNNAME', 'TOWNCODE']].values)
         # 取得該檔案所位於的county，並將adm鎖定在特定區域，取得adm_std
-            df_dict = pd.read_excel(io=sourcepath, sheet_name=None)
+            if '.csv' in sourcepath:
+                df_dict = pd.read_csv(filepath_or_buffer=sourcepath, storage_options=)
+            else:
+                df_dict = pd.read_excel(io=sourcepath, sheet_name=None)
             # df_dict = {_: AP_input(df_dict[_], _, filename_ext, adm_std) for _ in df_dict if
             #            _.split('_', 1)[0] not in ['歷次移轉明細'] and df_dict[_].empty is False}
             df_dict = {_: AP_input(df_dict[_], _, filename_ext) for _ in df_dict if _.split('_', 1)[0] not in ['歷次移轉明細'] and df_dict[_].empty is False}
