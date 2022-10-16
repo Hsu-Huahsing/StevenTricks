@@ -2,16 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/dependency_links.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/top_level.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2-py3-none-any.whl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2.tar.gz" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dbsqlite.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dfi.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dictur.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/fileop.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/net.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/netGEN.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/snt.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/tracker.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/CPL.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__main__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawl.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/financialreport.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/packet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/title_trans.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.1.2-py3-none-any.whl" beforeDir="false" afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2-py3-none-any.whl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.1.2.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2.tar.gz" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
