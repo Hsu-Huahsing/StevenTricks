@@ -40,54 +40,58 @@ def tonumeric_int( char ):
         return res
 
 
-def dtypes_df( df ) :
+def dtypes_df(df):
     df = df.convert_dtypes()
     # 把dataframe的dtypes屬性轉換成純文字的series，可以選擇是否在轉換過程中，統一更名成sql模式的屬性名稱，或是不更名
-    return df.dtypes.map( lambda x : x.name )
+    return df.dtypes.map(lambda x: x.name)
 
-def TenPercentile_to_int( char , errors = "raise" , local = "en_US.UTF-8" ) :
+
+def TenPercentile_to_int(char, errors="raise", local="en_US.UTF-8"):
     # 可以把帶有逗號的文字用千分位的模式轉換成數字的功能，所以要先檢查輸入的char是否為數字，如果是的話就直接用tonumeric_int轉成數字送出去就好，如果不是的話才要進行下面的功能，進行千分位轉換，如果千分位也無法轉換，那這個就不是數字
-    char = tonumeric_int( char )
-    if isinstance( char , str ) is False : return char
-    locale.setlocale( locale.LC_ALL , local )
+    char = tonumeric_int(char)
+    if isinstance(char, str) is False:
+        return char
+    locale.setlocale(locale.LC_ALL, local)
     
-    try :
-        return locale.atof( char )
-    except ValueError :
-        if errors == "raise" :
+    try:
+        return locale.atof(char)
+    except ValueError:
+        if errors == "raise":
             raise ValueError
-        elif errors == "ignore" :
+        elif errors == "ignore":
             return char
-        elif errors == "coerce" :
+        elif errors == "coerce":
             return None
-    except :
-        print("=====NEW ERROR=====\n{}\n=====NEW ERROR=====\n{}".format( sys.exc_info() , char ) )
+    except:
+        print("=====NEW ERROR=====\n{}\n=====NEW ERROR=====\n{}".format(sys.exc_info(), char))
         raise ValueError
 
 
-def changetype_stringtodate( df = pd.DataFrame() , datecol = [] , mode = 1):
-    def mode2( series ) :
-        series = series.str.split("年|月|日" , expand = True).rename(columns = {0 : "year" , 1 : "month" , 2 : "day"} )
-        series.loc[ : , "year"] = (pd.to_numeric(series.loc[ : , "year"] , downcast = "integer" , errors = 'coerce') + 1911 ).astype(str)
-        series = pd.to_datetime(series.loc[ : , ["year" , "month" , "day"] ] , errors = "coerce" , infer_datetime_format = True)
+def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
+    def mode2(series):
+        series = series.str.split("年|月|日", expand=True).rename(columns={0: "year", 1: "month", 2: "day"})
+        print('ok')
+        print(series)
+        series.loc[:, "year"] = (pd.to_numeric(series.loc[:, "year"], downcast="integer", errors='coerce') + 1911).astype(str)
+        series = pd.to_datetime(series.loc[:, ["year", "month", "day"]], errors="coerce", infer_datetime_format=True)
         return series
     
-    def mode3 ( series ) :
-        series = series.str.split("-" , expand = True).rename(columns = {0 : "month" , 1 : "year"} ).reindex(columns = ['year' , 'month'] )
-        series = ( pd.to_numeric( series.loc[ : , "year" ] , downcast = "float" , errors = "coerce" ) + 1911 ).astype(str).str.split("." , expand = True)[0] + "-" + series["month"]
-        series = pd.to_datetime(series , errors = "coerce" , infer_datetime_format = True)
+    def mode3(series):
+        series = series.str.split("-", expand=True).rename(columns={0: "month", 1: "year"}).reindex(columns=['year', 'month'])
+        series = (pd.to_numeric(series.loc[:, "year"], downcast="float", errors="coerce") + 1911).astype(str).str.split(".", expand=True)[0] + "-" + series["month"]
+        series = pd.to_datetime(series, errors="coerce", infer_datetime_format=True)
         return series
     
-    if mode == 1 :
-        df.loc[ : , datecol] = df.loc[ : , datecol].apply(lambda x : pd.to_numeric( x , downcast = "float" , errors = "coerce" ).astype(str).str.rsplit("." , n = 1 , expand = True )[0].str.zfill(7) )
-        df.loc[ : , datecol] = df.loc[ : , datecol].apply(lambda x : (pd.to_numeric( x.str.slice(stop = 3) , errors = 'coerce' ) + 1911 ).fillna("").astype(str).str.rsplit(r"." , expand = True)[0] + x.str.slice(start = 3) )
-        df.loc[ : , datecol] = df.loc[ : , datecol].apply(lambda x : pd.to_datetime(x , errors = "coerce" , infer_datetime_format = True) )
+    if mode == 1:
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_numeric(x, downcast="float", errors="coerce").astype(str).str.rsplit(".", n=1, expand=True)[0].str.zfill(7))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: (pd.to_numeric(x.str.slice(stop=3), errors='coerce') + 1911).fillna("").astype(str).str.rsplit(r".", expand=True)[0] + x.str.slice(start=3))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_datetime(x, errors="coerce", infer_datetime_format=True))
     
-    elif mode == 2 :
-        df.loc[ : , datecol] = df.loc[ : , datecol].apply(lambda x : mode2(series = x) )
+    elif mode == 2:
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode2(series=x))
     
-    elif mode == 3 :
-        df.loc[ : , datecol] = df.loc[ : , datecol].apply(lambda x : mode3(series = x) )
+    elif mode == 3:
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode3(series=x))
     
     return df
 

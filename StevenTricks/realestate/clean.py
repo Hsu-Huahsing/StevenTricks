@@ -10,6 +10,13 @@ from os.path import splitext
 import unicodedata
 import pandas as pd
 
+# def test(s):
+#     s=s.dropna()
+#     s=pd.to_datetime(s)
+#     print(s)
+#     return s
+# t1 = pd.DataFrame([[1], [3, '2011/3/1'], [5, '2021/6/6']], columns=['tt', 'te'])
+# t1.loc[:, ['te']] = t1.loc[:, ['te']].apply(lambda x: test(x))
 
 def story_clean(text):
     text = tonumeric_int(text)
@@ -61,7 +68,7 @@ def AP_input(df, sheet, filename_ext):
         templist = [_ for _ in ['DATE', 'FNSH_DATE'] if _ in df]
         df = changetype_stringtodate(df=df, datecol=templist, mode=DATE_mode['ActualPrice'][sheet])
     templist = [_ for _ in ['BUILD_FLRPRC', 'REALTY_SUMVAL', 'BUILDMSR', 'STALLMSR', '主建物面積', '附屬建物面積', '陽台面積'] if _ in df]
-    df.loc[ : , templist] = df.loc[:, templist].apply(lambda x : pd.to_numeric(x, downcast='float', errors='coerce'))
+    df.loc[:, templist] = df.loc[:, templist].apply(lambda x : pd.to_numeric(x, downcast='float', errors='coerce'))
     
     templist = [_ for _ in ['BUILDMSR', 'STALLMSR', '主建物面積', '附屬建物面積', '陽台面積'] if _ in df]
     df.loc[:, templist] = df.loc[:, templist].apply(lambda x: x*.3025)

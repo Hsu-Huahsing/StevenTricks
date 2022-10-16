@@ -3,7 +3,7 @@
 # sys.path
 
 from StevenTricks import dbsqlite as db
-from StevenTricks.fileop import PathWalk_df, xlstoxlsx
+from StevenTricks.fileop import PathWalk_df, xlstoxlsx, independentfilename
 from StevenTricks.dfi import dfrows_iter
 from StevenTricks.realestate.packet import Workdir, APfilename_dict
 
@@ -94,9 +94,10 @@ if __name__ == '__main__':
                     print(res)
 
     elif Workdir.proj_dict['dir'] in ['ActualPrice']:
+        # 不管是購買的還是下載免費的，都只能給副檔名是'.xls'的excel表
         from StevenTricks.realestate.clean import AP_input
         # adm = next(Workdir.crosswalk_iter())
-        source_df = PathWalk_df(Workdir.source_path, level=1)
+        source_df = PathWalk_df(Workdir.source_path, fileinclude=['.xls'], level=1)
         for sourcepath in source_df['path']:
             # 對每一個.xlsm檔案做迭代，下面對整個excel表內的資料作統一整理
             filename_ext = basename(sourcepath)
@@ -105,20 +106,17 @@ if __name__ == '__main__':
                     break
             #         利用for的方式找出vocab和county停在哪裡，就知道這個檔案是位於哪個區域
             # adm_std = dict(adm.loc[adm['COUNTYCODE'] == county, ['TOWNNAME', 'TOWNCODE']].values)
-        # 取得該檔案所位於的county，並將adm鎖定在特定區域，取得adm_std
-            if '.csv' in sourcepath:
-                df_dict = pd.read_csv(filepath_or_buffer=sourcepath, storage_options=)
-            else:
-                df_dict = pd.read_excel(io=sourcepath, sheet_name=None)
+            # 取得該檔案所位於的county，並將adm鎖定在特定區域，取得adm_std
+            df_dict = pd.read_excel(io=sourcepath, sheet_name=None)
             # df_dict = {_: AP_input(df_dict[_], _, filename_ext, adm_std) for _ in df_dict if
             #            _.split('_', 1)[0] not in ['歷次移轉明細'] and df_dict[_].empty is False}
             df_dict = {_: AP_input(df_dict[_], _, filename_ext) for _ in df_dict if _.split('_', 1)[0] not in ['歷次移轉明細'] and df_dict[_].empty is False}
-        # 用pd.read_excel讀取檔案並對內容作資料清理，且排除'歷次移轉明細'，因為這個sheet不需要納入資料庫，如果資料本身是空的也排除
+            # 用pd.read_excel讀取檔案並對內容作資料清理，且排除'歷次移轉明細'，因為這個sheet不需要納入資料庫，如果資料本身是空的也排除
             df_dict = {_: df_dict[_] for _ in df_dict if df_dict[_] is not None}
             # 以上排除資料清理完是None的資料
             dfmain_dict = {_: df_dict.pop(_) for _ in [_ for _ in df_dict for main in ['不動產買賣', '預售屋買賣', '不動產租賃'] if main in _]}
-        # 把主要sheet( '不動產買賣' , '預售屋買賣' , '不動產租賃' )分類在dfmain_dict，其餘附表分類在df_dict
-        # 下方開始做個別的資料分類插入資料庫，先由主要資料表dfmain_dict開始插入，每插入一個主要資料表做迭代所有的附表，附表會先跟主要資料表做merge以確保該附表資料存在於主資料上
+            # 把主要sheet( '不動產買賣' , '預售屋買賣' , '不動產租賃' )分類在dfmain_dict，其餘附表分類在df_dict
+            # 下方開始做個別的資料分類插入資料庫，先由主要資料表dfmain_dict開始插入，每插入一個主要資料表做迭代所有的附表，附表會先跟主要資料表做merge以確保該附表資料存在於主資料上
             pk = 'ID'
             for sheetmain in dfmain_dict:
                 # 開始處理每一個主資料表
@@ -135,7 +133,7 @@ if __name__ == '__main__':
                     for df_chunk in dfrows_iter(df, ['DATE'], db.sqltype_dict):
                         # 因為都是針對已經存在的主資料表去merge，所以正常來講不用新增db也不會有db不存在的情況
                         db.tosql_df(df_chunk[1], join(Workdir.path, Sheetmain, df_chunk[0][0] + '.db'), sheettable, [pk], fktable=county, fk=[pk])
-            replace(sourcepath, join(Workdir.used_path, filename_ext))
+            replace(sourcepath, independentfilename(join(Workdir.used_path, filename_ext)))
             db.conn.close()
 
     elif Workdir.proj_dict['dir'] in ['Examin']:
