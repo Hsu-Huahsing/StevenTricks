@@ -2,28 +2,54 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dbsqlite.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dfi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/dictur.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/fileop.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/net.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/netGEN.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/snt.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/tracker.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/CPL.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__main__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/analysis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawl.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/financialreport.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/packet.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/title_trans.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/GIS/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/GIS/countymap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/GIS/districtmap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/GIS/qgis/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/GIS/villagemap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/realestate/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/vitruvius/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/conf/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/net/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/warehouse/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/AP_examin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/FC.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/FC_parse.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GH.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/QGIS.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/countymap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/districtmap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/qgis/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/villagemap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/Ubee.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/__main__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/analysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/clean.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/conf.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/packet.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/roadname_insert.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/NLP_S.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/NLPtools/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/algorithm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/logicop.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/conf/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/conf/twse.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/net/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/net/twseGEN.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/lib/StevenTricks/warren/warehouse/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.0.2-py3-none-any.whl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.0.2.tar.gz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks/realestate/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/realestate/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.1.2-py3-none-any.whl" beforeDir="false" afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2-py3-none-any.whl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.1.2.tar.gz" beforeDir="false" afterPath="$PROJECT_DIR$/dist/StevenTricks-0.1.2.tar.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,10 +82,19 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/PythonProject",
+    "last_opened_file_path": "/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/PythonProject/StevenTricks/warren/warehouse",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/StevenTricks/warren/warehouse" />
+      <recent name="$PROJECT_DIR$/StevenTricks/warren/net" />
+      <recent name="$PROJECT_DIR$/StevenTricks/warren/conf" />
+      <recent name="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools" />
+      <recent name="$PROJECT_DIR$/StevenTricks/realestate/GIS/villagemap" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
