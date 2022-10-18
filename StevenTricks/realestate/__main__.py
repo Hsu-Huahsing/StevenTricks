@@ -89,11 +89,11 @@ if __name__ == '__main__':
                 print(filename)
                 sleep(0.1)
         elif Workdir.proj_dict['func'] in ['NLP']:
-
-            with Pool() as pool:
-                for res in pool.imap_unordered(text_parse, args_list):
-                    res = pd.DataFrame(res)
-                    print(res)
+            pass
+            # with Pool() as pool:
+            #     for res in pool.imap_unordered(text_parse, args_list):
+            #         res = pd.DataFrame(res)
+            #         print(res)
 
     elif Workdir.proj_dict['dir'] in ['ActualPrice']:
         # 不管是購買的還是下載免費的，都只能給副檔名是'.xls'的excel表
