@@ -8,7 +8,7 @@ Created on Fri May 22 23:22:32 2020
 
 import configuration as cf
 from os import path, walk
-from steventricks.mighty import picklesave, pickleload,data_renew, make_url, dataframe_zip
+from steventricks.mighty import picklesave, pickleload, data_renew, make_url, dataframe_zip
 import requests as re
 from datetime import datetime
 from packet import crawlerdic, crawlerdictodf, multilisforcrawl, stocktablecrawl
@@ -25,8 +25,8 @@ def parser(crawlerdic={}, timeout=20):
     header = crawlerdic["header"]
     payload = crawlerdic["payload"]
     m = crawlerdic["m"]
-    
-# debug for date =====================================================
+
+    # debug for date =====================================================
     try:
         if pd.isnull(pd.Timestamp(crawldate)) is True:
             crawlerdic["errormessage"] = "get None date value"
@@ -41,74 +41,77 @@ def parser(crawlerdic={}, timeout=20):
         crawlerdic["stat"] = "othererrors"
         return crawlerdic
 
-# debug for url =====================================================
-    link = make_url(url = url, data = payload, headers = header,typ="post",timeout=timeout)
-    if isinstance(link, str) == True :
+    # debug for url =====================================================
+    link = make_url(url=url, data=payload, headers=header, typ="post", timeout=timeout)
+    if isinstance(link, str) == True:
         crawlerdic["errormessage"] = link
         crawlerdic["stat"] = "badconnection"
         return crawlerdic
-    elif pd.isnull(link) == True :
+    elif pd.isnull(link) == True:
         crawlerdic["errormessage"] = link
         crawlerdic["stat"] = "badconnection"
         return crawlerdic
-    elif link.status_code != re.codes.ok :
+    elif link.status_code != re.codes.ok:
         crawlerdic["errormessage"] = link.status_code
         crawlerdic["stat"] = "badconnection"
         return crawlerdic
-    
-# debug for jsontext ================================================
+
+    # debug for jsontext ================================================
     try:
         jsontext = link.json()
     except:
         crawlerdic["errormessage"] = format_exc()
-        crawlerdic["data"] =link
+        crawlerdic["data"] = link
         crawlerdic["stat"] = "jsonerror"
         return crawlerdic
 
-    if jsontext["stat"] != "OK" :
+    if jsontext["stat"] != "OK":
         crawlerdic["errormessage"] = jsontext["stat"]
         crawlerdic["data"] = jsontext
         crawlerdic["stat"] = "closed"
         return crawlerdic
 
-# prepare for saving ================================================
+    # prepare for saving ================================================
     link.close()
-    jsontext["item"]      = item
+    jsontext["item"] = item
     jsontext["crawldate"] = crawldate
-    jsontext["m"]         = m
-    savepath              = path.join(cf.cloud_path, r"warehouse", item,
-                                      str(pd.to_datetime(crawldate).year),
-                                      "{}_{}".format(item,crawldate))
-    picklesave(savepath,jsontext,cover=True)
-    
-    crawlerdic["data"]    = jsontext
-    crawlerdic["stat"]    = str(datetime.now().date())
+    jsontext["m"] = m
+    savepath = path.join(cf.cloud_path, r"warehouse", item,
+                         str(pd.to_datetime(crawldate).year),
+                         "{}_{}".format(item, crawldate))
+    picklesave(savepath, jsontext, cover=True)
+
+    crawlerdic["data"] = jsontext
+    crawlerdic["stat"] = str(datetime.now().date())
     return crawlerdic
+
 
 # market == stock > item > title
 class management(object):
-    log_path            = path.join(cf.cloud_path, "log.pkl")
+    log_path = path.join(cf.cloud_path, "log.pkl")
     warehouse_path = path.join(cf.cloud_path, "warehouse")
-    stocktable         = pickleload(path.join(cf.cloud_path, r"stocktable.pkl"))
-    log                     = crawlerdictodf(typ="item")
-    mall                   = set([_["m"] for _ in crawlerdic.values()])
-    item                   = [_ for _ in crawlerdic]
+    stocktable = pickleload(path.join(cf.cloud_path, r"stocktable.pkl"))
+    log = crawlerdictodf(typ="item")
+    mall = set([_["m"] for _ in crawlerdic.values()])
+    item = [_ for _ in crawlerdic]
+
     # titleall       = [i for i in crawldic.values() for i in i["title"]]
 
     def __init__(self, start=None, end=None):
         self.start = start
-        self.end   = end
-        self.log   = self.log.loc[self.start:self.end:]
+        self.end = end
+        self.log = self.log.loc[self.start:self.end:]
         print(r"Renewing the log ... ")
         if path.exists(self.log_path) is True:
             old = pickleload(self.log_path)
-            self.log.loc[:, self.item] = data_renew(self.log.loc[:, self.item],old.loc[:,self.item])
-        
+            self.log.loc[:, self.item] = data_renew(self.log.loc[:, self.item], old.loc[:, self.item])
+
     def clearner_lis(self, item=[]):
         if isinstance(item, list) is False:
             print("Input error, item must be list")
             return None
-        elif not item: item = self.crawldic.keys()
+        elif not item:
+            item = self.crawldic.keys()
         p = self.warehouse_path
         res = []
         for k in item:
@@ -116,17 +119,18 @@ class management(object):
             if not temp: continue
             res += temp
         return res
-    
-    def findstock(self,io=r""):
-        io=io.split("_")
-        if len(io)==2:
-            temp = self.stocktable.loc[(self.stocktable["代號"]==io[0]) & (self.stocktable["名稱"]==io[1]),:]
-        elif len(io)==1:
-            temp = self.stocktable.loc[(self.stocktable["名稱"]==io[0]),:]
+
+    def findstock(self, io=r""):
+        io = io.split("_")
+        if len(io) == 2:
+            temp = self.stocktable.loc[(self.stocktable["代號"] == io[0]) & (self.stocktable["名稱"] == io[1]), :]
+        elif len(io) == 1:
+            temp = self.stocktable.loc[(self.stocktable["名稱"] == io[0]), :]
         else:
             return io
-        if temp.empty == True : return None
-        return temp["代號"]+"_"+temp["名稱"]
+        if temp.empty == True: return None
+        return temp["代號"] + "_" + temp["名稱"]
+
 
 # In[]
 if __name__ == "__main__":
@@ -134,16 +138,16 @@ if __name__ == "__main__":
     m = management()
     m.mall
     log = m.log
-    log=log["2021-1-1":]
+    log = log["2021-1-1":]
     crawldata = dataframe_zip(df=log, col_include=m.item, key_include=["closed"], time=False)
     # "badconnection","closed","jsonerror" , "wait"
     multilis = multilisforcrawl(crawldata)
     if stocktable_renew == True:
         stocktablecrawl(timeout=15)
-# In[]
+    # In[]
     try:
         for payload in multilis:
-            print("crawling {}_{}".format(payload["crawldate"],payload["item"]))
+            print("crawling {}_{}".format(payload["crawldate"], payload["item"]))
             res = parser(payload)
             if "errormessage" in res:
                 print(res["stat"])
@@ -152,7 +156,7 @@ if __name__ == "__main__":
                 print("資料日期 ==> ", res["data"]["date"])
             else:
                 print(res["stat"])
-            
+
             log.loc[log[res["item"]].index == res["crawldate"], res["item"]] = res["stat"]
             print(log.loc[log[res["item"]].index == res["crawldate"], res["item"]])
             picklesave(m.log_path, log, cover=True)
