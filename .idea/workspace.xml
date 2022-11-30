@@ -2,17 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/twse.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StevenTricks/warren/twse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/clean/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/clean/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/clean/twse.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/clean/twse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/conf/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/conf/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/conf/twse.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/conf/twse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/crawler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/net/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/model/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/net/twseGEN.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/model/twseGEN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/crawler/model/twseGEN.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/model/twse.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

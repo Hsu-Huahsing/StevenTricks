@@ -1,5 +1,6 @@
 from StevenTricks.dictur import findstr
-from warren.conf.twse import collection
+from StevenTricks.warren.crawler.conf.twse import collection
+# from sys import path
 
 
 class Packet:
