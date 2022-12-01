@@ -1,32 +1,47 @@
 from StevenTricks.dictur import findstr
-from StevenTricks.warren.crawler.conf.twse import collection
+from StevenTricks.warren.conf import collection
+from StevenTricks.netGEN import randomheader
+from traceback import format_exc
+import requests as re
 # from sys import path
 
 
 class Packet:
-    def __init__(self, title):
+    def __init__(self):
         # title is the target type of stock
-        self.title = title
-        self.packet = collection[title]
+        self.title=None
+        self.packet=None
 
-    def payload(self, datemin=None):
-        # datemin is the minimum of title
-        # Firstly find the date key of payload
-        datekey = findstr(self.packet, 'date')
-        if len(datekey) == 1:
-            datekey = datekey[0]
+    def set_title(self, title):
+        self.title=title
+        self.packet=collection[title]
+
+    def packet(self, datemin=None):
+        # 產生可以放進request的payload
+        # 可以指定要放進去的最小日期(datemin)，不然就用預設的最小日期datemin
+        # datemin的格式必須為yyyy-m-d
+        DateKeyInPayload=findstr(self.packet['payload'], 'date|Date')
+        DateKeyInPayload=DateKeyInPayload[0]
+
+        if datemin is None:
+            self.packet['payload'][DateKeyInPayload]=self.packet['date_min']
         else:
-            print(self.packet, '/n________')
-            print(datekey, '/n________/ndatekey length shouldn\'t greater than 1')
-            return 'PacketValueError'
+            self.packet['payload'][DateKeyInPayload]=datemin
+        return self.packet
 
-        # if you don't assign the date, give the date_min. Or give the specific date.
-        if cal is None:
-            self.packet['payload'][datekey] = self.packet['date_min']
-        else:
-            self.packet['payload'][datekey] = datemin
+class Spyder:
+    def __int__(self):
+        self.title=None
 
-        return self.packet['payload']
+    def request(self,packet):
+        res=re.post(url=packet['url'],headers=randomheader(),data=packet['payload'],timeout=60)
+        try:
+            jsontext = res.json()
+        except:
+            packet["errormessage"]=format_exc()
+            packet['restatuscode']=res.status_code
+            return None
+
 
 
 if __name__ == '__main__':
