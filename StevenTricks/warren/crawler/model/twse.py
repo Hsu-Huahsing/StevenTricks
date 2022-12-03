@@ -41,6 +41,7 @@ class Spyder:
             packet["errormessage"]=format_exc()
             packet['restatuscode']=res.status_code
             return None
+        
 
 
 
