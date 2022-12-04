@@ -21,6 +21,8 @@ class log:
         if exists(join(warehousepath, 'log.pkl')) is True:
             self.sourcelog = pickleload(join(warehousepath, 'log.pkl'))
 
+    def periodictable(self, perioddict):
+        # 傳入的格式為{name:{'mindate':'yyyy-m-d','freq':'D' or 'M'}}，可多個name重複
 
 
 

@@ -15,6 +15,7 @@ from packet import crawlerdic, crawlerdictodf, multilisforcrawl, stocktablecrawl
 import pandas as pd
 from traceback import format_exc
 import sys
+
 class Packet:
     def __init__(self):
         # title is the target type of stock
