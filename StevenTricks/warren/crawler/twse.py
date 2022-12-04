@@ -15,7 +15,33 @@ from packet import crawlerdic, crawlerdictodf, multilisforcrawl, stocktablecrawl
 import pandas as pd
 from traceback import format_exc
 import sys
+class Packet:
+    def __init__(self):
+        # title is the target type of stock
+        self.title=None
+        self.packet=None
 
+    def settitle(self, title):
+        self.title=title
+        self.packet=collection[title]
+
+    def packet(self, datemin=None):
+        # 產生可以放進request的payload
+        # 可以指定要放進去的最小日期(datemin)，不然就用預設的最小日期datemin
+        # datemin的格式必須為yyyy-m-d
+        DateKeyInPayload=findstr(self.packet['payload'], 'date|Date')
+        DateKeyInPayload=DateKeyInPayload[0]
+
+        if datemin is None:
+            self.packet['payload'][DateKeyInPayload]=self.packet['date_min']
+        else:
+            self.packet['payload'][DateKeyInPayload]=datemin
+        return self.packet
+
+
+
+res=re.post(url=packet['url'],headers=randomheader(),data=packet['payload'],timeout=60)
+json=safereturn(res,packet,True)[0]
 
 def parser(crawlerdic={}, timeout=20):
     # example : date == "2020-3-10"

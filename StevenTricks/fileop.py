@@ -9,6 +9,24 @@ import pandas as pd
 from os import makedirs, walk, remove
 from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, splitext
 # from sys import platform
+import pickle
+
+
+def picklesave(data,path):
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
+
+
+def pickleload(path):
+    with open(path, 'rb') as f:
+        data = pickle.load(f)
+        return data
+
+
+def warehouseinit(path):
+    source, cleaned = join(path, 'source'), join(path, 'cleaned')
+    makedirs(source, exist_ok=True), makedirs(cleaned, exist_ok=True)
+
 
 def xlstoxlsx( path ):
     newpath = splitext( path )[0] + '.xlsx'
