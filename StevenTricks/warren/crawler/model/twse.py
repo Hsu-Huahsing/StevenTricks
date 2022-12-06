@@ -1,5 +1,4 @@
 import pandas as pd
-
 from StevenTricks.dictur import findstr
 from StevenTricks.fileop import pickleload, picklesave, warehouseinit
 from StevenTricks.dfi import dateseries
@@ -10,8 +9,8 @@ import requests as re
 from os.path import exists, join
 
 
-class log:
-    def __int__(self, warehousepath):
+class Log:
+    def __init__(self,warehousepath=''):
         self.warehouse = warehousepath
         warehouseinit(self.warehouse)
 
@@ -26,10 +25,10 @@ class log:
             self.sourcelog = pickleload(join(warehousepath, 'log.pkl'))
 
     def periodictable(self, perioddict):
-        # 傳入的格式為{name:{'mindate':'yyyy-m-d','freq':'D' or 'M'}}，可多個name同時傳入
+        # 傳入的格式為{name:{'DateMin':'yyyy-m-d','freq':'D' or 'M'}}，可多個name同時傳入
         df = []
         for key in perioddict:
-            df.append(dateseries(seriesname=key, mindate=perioddict[key]['mindate'], freq=perioddict[key]['freq'], defaultval=False))
+            df.append(dateseries(seriesname=key, datemin=perioddict[key]['DateMin'], freq=perioddict[key]['freq'], defaultval=False))
         df = pd.concat(df, axis=1)
         return df
 
