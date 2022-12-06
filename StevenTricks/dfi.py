@@ -1,15 +1,29 @@
 # -*- coding: utf-8 -*-
 
 from StevenTricks.snt import dtypes_df
-
+import numpy as np
 import pandas as pd
 import re
 from itertools import product
-from datetime import date
+from datetime import date,datetime
 from os.path import join, split
 from os import makedirs, walk
 
 
+def dateseries(seriesname="", pendix="", mindate="", maxdate=datetime.now(), freq="", defaultstr=None):
+    # 這是用來產生時間當作index的一串series
+    # seriesname,pendix就是這個series的name和前綴詞，如果需要放註記避免重複可以用pendix
+    # mindate、maxdate可以用來指定特定區間，maxdate預設是當天，freq是指這段區間的頻率，可以是Ｄ、Ｗ、Ｍ、Ｑ、Ｙ
+    # defaultstr是這個series產生的時候內部預設的文字
+    d = pd.date_range(start=mindate, end=maxdate, freq=freq)
+    print(type(d))
+    d = d.append(pd.DatetimeIndex([maxdate]))
+    # 因為d的屬性是pandas.core.indexes.datetimes.DatetimeIndex，實質上是index，所以要用index內建的function，pd.concat只能用在df和series
+    d = d.unique()
+    return pd.Series(np.repeat(defaultstr, d.size), index=d, name=pendix + seriesname)
+
+
+# dateseries(seriesname='ssss',mindate='2010-1-1',freq='W')
 def replace_series(series, std_dict, na=False, mode="fuzz"):
     # series依照std_dict給定的對照表，去replace每一個值，std_dict只能是一對一的dict，取代的方式分為fuzz和exac兩個模式，exac比較快速但適用範圍較窄，fuzz適用範圍比較廣，但是比較慢，在可以預期的情況下盡量使用exac
     res = []
