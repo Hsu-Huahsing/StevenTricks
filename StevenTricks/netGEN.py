@@ -1,8 +1,8 @@
 import requests as re
 
 from traceback import format_exc
-from net import headers
-from dictur import randomitem
+from StevenTricks.net import headers
+from StevenTricks.dictur import randomitem
 
 
 def randomheader():

@@ -10,17 +10,17 @@ from os.path import join, split
 from os import makedirs, walk
 
 
-def dateseries(seriesname="", pendix="", mindate="", maxdate=datetime.now(), freq="", defaultstr=None):
+def dateseries(seriesname="", pendix="", mindate="", maxdate=datetime.now(), freq="", defaultval=None):
     # 這是用來產生時間當作index的一串series
     # seriesname,pendix就是這個series的name和前綴詞，如果需要放註記避免重複可以用pendix
     # mindate、maxdate可以用來指定特定區間，maxdate預設是當天，freq是指這段區間的頻率，可以是Ｄ、Ｗ、Ｍ、Ｑ、Ｙ
-    # defaultstr是這個series產生的時候內部預設的文字
+    # defaultstr是這個series產生的時候內部預設的文字，因為如果跟其他series結合，沒有值的話python本身就是預設None，所以如果要用作判斷是結合後為空直，還是本身就是空直，盡量default不要是none
     d = pd.date_range(start=mindate, end=maxdate, freq=freq)
     print(type(d))
     d = d.append(pd.DatetimeIndex([maxdate]))
     # 因為d的屬性是pandas.core.indexes.datetimes.DatetimeIndex，實質上是index，所以要用index內建的function，pd.concat只能用在df和series
     d = d.unique()
-    return pd.Series(np.repeat(defaultstr, d.size), index=d, name=pendix + seriesname)
+    return pd.Series(np.repeat(defaultval, d.size), index=d, name=pendix + seriesname)
 
 
 # dateseries(seriesname='ssss',mindate='2010-1-1',freq='W')
