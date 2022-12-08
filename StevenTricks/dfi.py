@@ -22,6 +22,17 @@ def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now(), fre
     return pd.Series(np.repeat(defaultval, d.size), index=d, name=pendix + seriesname)
 
 
+def periodictable(perioddict, datemin=None):
+    # 傳入的格式為{name:{'datemin':'yyyy-m-d','freq':'D' or 'M'}}，可多個name同時傳入
+    df = []
+    for key in perioddict:
+        if datemin is not None:
+            perioddict[key]['datemin'] = datemin
+        df.append(dateseries(seriesname=key, datemin=perioddict[key]['datemin'], freq=perioddict[key]['freq'], defaultval=False))
+    df = pd.concat(df, axis=1)
+    return df
+
+
 # dateseries(seriesname='ssss',mindate='2010-1-1',freq='W')
 def replace_series(series, std_dict, na=False, mode="fuzz"):
     # series依照std_dict給定的對照表，去replace每一個值，std_dict只能是一對一的dict，取代的方式分為fuzz和exac兩個模式，exac比較快速但適用範圍較窄，fuzz適用範圍比較廣，但是比較慢，在可以預期的情況下盡量使用exac
