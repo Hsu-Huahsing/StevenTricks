@@ -17,7 +17,7 @@ import sys
 warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
 
 stocklog = Log(warehousepath)
-periodic = stocklog.periodictable(collection)
+periodic = stocklog.updatelog(stocklog.sourcelog, collection)
 
 class Packet:
     def __init__(self):
