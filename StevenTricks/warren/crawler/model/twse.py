@@ -7,10 +7,12 @@ from StevenTricks.netGEN import randomheader, safereturn
 import requests as re
 # from sys import path
 from os.path import exists, join
+from datetime import datetime
+datetime.now()
 
 
 class Log:
-    def __init__(self,warehousepath=''):
+    def __init__(self, warehousepath=''):
         self.warehouse = warehousepath
         warehouseinit(self.warehouse)
 
@@ -24,11 +26,18 @@ class Log:
         if exists(join(warehousepath, 'log.pkl')) is True:
             self.sourcelog = pickleload(join(warehousepath, 'log.pkl'))
 
-    def updatetable(self, logtype):
-        #logtype可以是source、cleanedlog、usagelog
+    def updatelog(self, periodictdf, periodict):
+        if periodictdf is None:
+            log = periodictable(periodict)
+        else:
+            latestlog = periodictable(periodict, datemin=datetime.now())
+            log = pd.concat([periodict, latestlog])
+        return log
 
-
-
+    def savelog(self, log, logtype):
+        # logtype could be 'source'、'cleaned'，也可以什麼都不打，就代表是warehouse底下的使用紀錄
+        path = join(self.warehouse, logtype, r'log')
+        picklesave(log, path)
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, s
 import pickle
 
 
-def picklesave(data,path):
+def picklesave(data, path):
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
@@ -24,6 +24,7 @@ def pickleload(path):
 
 
 def warehouseinit(path):
+    # 會產生兩個資料夾，source和cleaned，都放在warehouse底下
     source, cleaned = join(path, 'source'), join(path, 'cleaned')
     makedirs(source, exist_ok=True), makedirs(cleaned, exist_ok=True)
 
