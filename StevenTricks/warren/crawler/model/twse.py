@@ -16,9 +16,12 @@ class Log:
         self.warehouse = warehousepath
         warehouseinit(self.warehouse)
 
+        # 先把三個log初始化成None
         self.sourcelog = None
         self.cleanedlog = None
         self.usagelog = None
+
+        # 再去檢查是否有檔案，有的話就讀取，沒有就保持None
         if exists(join(warehousepath, 'source', 'log.pkl')) is True:
             self.sourcelog = pickleload(join(warehousepath, 'source', 'log.pkl'))
         if exists(join(warehousepath, 'cleaned', 'log.pkl')) is True:
