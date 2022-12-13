@@ -9,7 +9,7 @@ from datetime import date, datetime
 from os.path import join, split
 from os import makedirs, walk
 
-pd.date_range(start=datetime.now(), periods=1, freq='D')
+# pd.date_range(start='2022-12-30', periods=1, freq='M')[0]
 
 def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now(), freq="", defaultval=None):
     # 這是用來產生時間當作index的一串series

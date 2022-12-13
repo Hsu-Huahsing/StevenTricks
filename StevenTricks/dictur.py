@@ -35,3 +35,17 @@ def stack(dic):
             res[value] = []
         res[value].append(key)
     return res
+
+
+def renamekey(dic, replacedic={}, error='coerce'):
+    # replacedic = { oldkey : newkey}
+    # error 可以是 coerce就是沒有這個key就給一個None，ignore意思就是沒有這個key就什麼都不做
+    for key in replacedic:
+        if replacedic[key] not in dic:
+            if error == 'coerce':
+                dic[replacedic[key]] = None
+            elif error == 'ignore':
+                pass
+            continue
+        dic[key] = dic.pop(replacedic[key])
+    return dic

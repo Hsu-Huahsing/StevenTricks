@@ -82,7 +82,8 @@ def multilisforcrawl(itemlis=[], crawldic=crawlerdic):
     for i in itemlis:
         date = i[0]
         item = i[1]
-        if item not in crawldic: continue
+        if item not in crawldic:
+            continue
 
         crawl = deepcopy(crawldic[item])
         dname = crawl["dname"]
@@ -92,31 +93,6 @@ def multilisforcrawl(itemlis=[], crawldic=crawlerdic):
         crawl["header"] = next(iter_headers())
         res.append(crawl)
     return res
-
-
-def crawlerdictodf(defaultstr="wait", typ="item"):
-    def makeseries(col="", start="", end=now, freq="", pendix="", defaultstr=defaultstr):
-        d = pd.date_range(start=start, end=end, freq=freq)
-        d = d.append(pd.DatetimeIndex([now]))
-        d = d.unique()
-        s = pd.Series(np.repeat(defaultstr, d.size), index=d, name=pendix + col)
-        return s
-
-    reslis = []
-    if typ == "item":
-        for key in crawlerdic:
-            reslis.append(
-                makeseries(col=key, start=crawlerdic[key]["date_min"], freq=crawlerdic[key]["freq"], pendix=""))
-    elif typ == "title":
-        for key in crawlerdic:
-            for title in crawlerdic[key]["title"]:
-                reslis.append(
-                    makeseries(col=title, start=crawlerdic[key]["date_min"], freq=crawlerdic[key]["freq"], pendix=""))
-    else:
-        print("wrong typ arg !")
-        return
-
-    return pd.concat(reslis, axis=1)
 
 
 def get_item(title):
