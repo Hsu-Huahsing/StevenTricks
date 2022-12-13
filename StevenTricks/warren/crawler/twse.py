@@ -6,18 +6,21 @@ Created on Fri May 22 23:22:32 2020
 @author: mac
 """
 from os import path, walk
+from StevenTricks.dfi import findval
 from StevenTricks.warren.conf import collection
 from StevenTricks.warren.crawler.model.twse import Log
-import requests as re
 from datetime import datetime
-import pandas as pd
 from traceback import format_exc
 import sys
+import requests as re
+import pandas as pd
+
 
 warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
 
 stocklog = Log(warehousepath)
 log = stocklog.updatelog(stocklog.sourcelog, collection)
+
 
 class Packet:
     def __init__(self):

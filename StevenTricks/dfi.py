@@ -10,8 +10,18 @@ from os.path import join, split
 from os import makedirs, walk
 
 # pd.date_range(start='2022-12-30', periods=1, freq='M')[0]
+# datetime.now().date()
 
-def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now(), freq="", defaultval=None):
+
+def findval(df, val):
+    for col in df:
+        series = df.loc[df[col].isin([val]), col]
+        res = zip(series.index, series.size*[col])
+        for ind, col1 in res:
+            yield ind, col1
+
+
+def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now().date(), freq="", defaultval=None):
     # 這是用來產生時間當作index的一串series
     # seriesname,pendix就是這個series的name和前綴詞，如果需要放註記避免重複可以用pendix
     # mindate、maxdate可以用來指定特定區間，maxdate預設是當天，freq是指這段區間的頻率，可以是Ｄ、Ｗ、Ｍ、Ｑ、Ｙ
