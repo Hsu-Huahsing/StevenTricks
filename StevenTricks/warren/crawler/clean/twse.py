@@ -14,6 +14,7 @@ import numpy as np
 
 now=datetime.now().date()
 
+
 def stocktablecrawl(maxn=13, timeout=180, pk="ISINCode"):
     dm = dbmanager(user="root")
     dm.choosedb(db="stocktable")

@@ -7,6 +7,7 @@ Created on Fri May 22 23:22:32 2020
 """
 from os import path, walk
 from StevenTricks.dfi import findval
+from StevenTricks.fileop import logfromfolder
 from StevenTricks.warren.conf import collection
 from StevenTricks.warren.crawler.model.twse import Log
 from datetime import datetime
@@ -20,7 +21,12 @@ warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/
 
 stocklog = Log(warehousepath)
 log = stocklog.updatelog(stocklog.sourcelog, collection)
+log = log.replace({'succeed': 'wait'})
+log = logfromfolder(warehousepath, '.pkl', log, 'succeed')
 
+for col, ind in findval(log, 'wait'):
+    crawlerdic = collection[col]
+    break
 
 class Packet:
     def __init__(self):
@@ -49,6 +55,7 @@ class Packet:
 
 res=re.post(url=packet['url'],headers=randomheader(),data=packet['payload'],timeout=60)
 json=safereturn(res,packet,True)[0]
+
 
 def parser(crawlerdic={}, timeout=20):
     # example : date == "2020-3-10"

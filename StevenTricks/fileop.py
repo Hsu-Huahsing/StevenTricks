@@ -29,12 +29,12 @@ def warehouseinit(path):
     makedirs(source, exist_ok=True), makedirs(cleaned, exist_ok=True)
 
 
-def xlstoxlsx( path ):
-    newpath = splitext( path )[0] + '.xlsx'
-    with pd.ExcelWriter( newpath ) as writer :
-        for df in pd.read_html( path , header = 0 ) :
-            df.to_excel( writer , index = False )
-    remove( path )
+def xlstoxlsx(path):
+    newpath = splitext(path)[0] + '.xlsx'
+    with pd.ExcelWriter(newpath) as writer:
+        for df in pd.read_html(path, header=0):
+            df.to_excel(writer, index=False)
+    remove(path)
     return newpath
 
 
@@ -55,12 +55,15 @@ def independentfilename(root, mark="_duplicated", count=1):
 
 # independentfilename(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/ActualPrice/used/a_lvr_land_a.xls')
 
-def pathlevel( left , right ) :
-    if isfile( right ) is True : right = abspath( join( right , pardir ) )
-    if len( left ) > len( right ) : return 
+
+def pathlevel(left, right):
+    if isfile(right) is True:
+        right = abspath(join(right, pardir))
+    if len(left) > len(right):
+        return
     level = 0
-    while not samefile( left , right ) :
-        right = abspath( join( right , pardir ) )
+    while not samefile(left, right):
+        right = abspath(join(right, pardir))
         level += 1
     return level
 
@@ -86,3 +89,13 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
         res = res.loc[~(res.loc[:, "file"].str.contains("|".join(fileexclude), na=True))]
     return res
 
+
+def logfromfolder(path, fileinclude, log, fillval):
+    # 標準檔名是col_yyyy-mm-dd.pkl所以用_可以拆分出col和date
+    # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
+    pathdf = PathWalk_df(path=path, fileinclude=fileinclude)
+    for name in pathdf['file']:
+        col = name.split('_')[0]
+        ind = name.split('_')[1].split('.')[0]
+        log.loc[ind, col] = fillval
+    return log

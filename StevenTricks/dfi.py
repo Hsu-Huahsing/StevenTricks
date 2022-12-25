@@ -39,7 +39,7 @@ def periodictable(perioddict, datemin=None):
     for key in perioddict:
         if datemin is not None:
             perioddict[key]['datemin'] = datemin
-        df.append(dateseries(seriesname=key, datemin=perioddict[key]['datemin'], freq=perioddict[key]['freq'], defaultval=False))
+        df.append(dateseries(seriesname=key, datemin=perioddict[key]['datemin'], freq=perioddict[key]['freq'], defaultval='wait'))
     df = pd.concat(df, axis=1)
     return df
 
