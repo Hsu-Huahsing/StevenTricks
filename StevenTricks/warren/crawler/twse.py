@@ -35,7 +35,7 @@ if __name__ == "__main__":
     # errorlog可以直接創一個空的df
     log = log.replace({'succeed': 'wait'})
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
-    log = logfromfolder(warehousepath, '.pkl', log, 'succeed')
+    log = logfromfolder(warehousepath, '.pkl', 'log', log, 'succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
 
     for ind, col in findval(log, 'wait'):

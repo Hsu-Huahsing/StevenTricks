@@ -90,10 +90,10 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
     return res
 
 
-def logfromfolder(path, fileinclude, log, fillval):
+def logfromfolder(path, fileinclude, fileexclude, log, fillval):
     # 標準檔名是col_yyyy-mm-dd.pkl所以用_可以拆分出col和date
     # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
-    pathdf = PathWalk_df(path=path, fileinclude=fileinclude)
+    pathdf = PathWalk_df(path=path, fileinclude=fileinclude, fileexclude=fileexclude)
     for name in pathdf['file']:
         col = name.split('_')[0]
         ind = name.split('_')[1].split('.')[0]
