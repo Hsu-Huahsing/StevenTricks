@@ -69,7 +69,7 @@ if __name__ == "__main__":
                         'errormessage1': format_exc(),
                         'errormessage2': e,
                         'errormessage3': 'request failed'}
-            errorlog.loc[ind, col] = errordic
+            errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
             continue
@@ -92,7 +92,7 @@ if __name__ == "__main__":
                         'request': res,
                         'requeststatus': res.status_code,
                         'errormessage1': 'result error'}
-            errorlog.loc[ind, col] = errordic
+            errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
             continue
