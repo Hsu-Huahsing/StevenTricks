@@ -13,21 +13,15 @@ datetime.now()
 
 class Log:
     def __init__(self, warehousepath=''):
-        self.warehouse = warehousepath
-        warehouseinit(self.warehouse)
+        self.warehousepath = warehousepath
+        warehouseinit(self.warehousepath)
 
-        # 先把三個log初始化成None
-        self.sourcelog = None
-        self.cleanedlog = None
-        self.usagelog = None
-
-        # 再去檢查是否有檔案，有的話就讀取，沒有就保持None
-        if exists(join(warehousepath, 'source', 'log.pkl')) is True:
-            self.sourcelog = pickleload(join(warehousepath, 'source', 'log.pkl'))
-        if exists(join(warehousepath, 'cleaned', 'log.pkl')) is True:
-            self.sourcelog = pickleload(join(warehousepath, 'cleaned', 'log.pkl'))
-        if exists(join(warehousepath, 'log.pkl')) is True:
-            self.sourcelog = pickleload(join(warehousepath, 'log.pkl'))
+    def findlog(self, logtype, kind):
+        # logtype could be 'source' 'cleaned' ''
+        # kind could be 'log.pkl' 'errorlog.pkl'
+        if exists(join(self.warehousepath, logtype, kind)) is True:
+            return pickleload(join(self.warehousepath, logtype, kind))
+        return None
 
     def updatelog(self, periodictdf, periodict):
         if periodictdf is None:
@@ -37,9 +31,10 @@ class Log:
             log = pd.concat([periodict, latestlog])
         return log
 
-    def savelog(self, log, logtype):
-        # logtype could be 'source'、'cleaned'，也可以什麼都不打，就代表是warehouse底下的使用紀錄
-        path = join(self.warehouse, logtype, r'log')
+    def savelog(self, log, logtype, kind):
+        # logtype could be 'source'、'cleaned'，也可以什麼都不打 '' ，就代表是warehouse底下的使用紀錄
+        # kind could be 'log.pkl' 'errorlog.pkl'
+        path = join(self.warehousepath, logtype, kind)
         picklesave(log, path)
 
 

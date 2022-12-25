@@ -5,217 +5,99 @@ Created on Fri May 22 23:22:32 2020
 
 @author: mac
 """
-from os import path, walk
+from os import path, remove
 from StevenTricks.dfi import findval
-from StevenTricks.fileop import logfromfolder
+from StevenTricks.netGEN import randomheader
+from StevenTricks.fileop import logfromfolder, picklesave
 from StevenTricks.warren.conf import collection
 from StevenTricks.warren.crawler.model.twse import Log
-from datetime import datetime
+import datetime
 from traceback import format_exc
 import sys
 import requests as re
 import pandas as pd
 
 
-warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
-
-stocklog = Log(warehousepath)
-log = stocklog.updatelog(stocklog.sourcelog, collection)
-log = log.replace({'succeed': 'wait'})
-log = logfromfolder(warehousepath, '.pkl', log, 'succeed')
-
-for col, ind in findval(log, 'wait'):
-    crawlerdic = collection[col]
-    break
-
-class Packet:
-    def __init__(self):
-        # title is the target type of stock
-        self.title=None
-        self.packet=None
-
-    def settitle(self, title):
-        self.title=title
-        self.packet=collection[title]
-
-    def packet(self, datemin=None):
-        # 產生可以放進request的payload
-        # 可以指定要放進去的最小日期(datemin)，不然就用預設的最小日期datemin
-        # datemin的格式必須為yyyy-m-d
-        DateKeyInPayload=findstr(self.packet['payload'], 'date|Date')
-        DateKeyInPayload=DateKeyInPayload[0]
-
-        if datemin is None:
-            self.packet['payload'][DateKeyInPayload]=self.packet['date_min']
-        else:
-            self.packet['payload'][DateKeyInPayload]=datemin
-        return self.packet
-
-
-
-res=re.post(url=packet['url'],headers=randomheader(),data=packet['payload'],timeout=60)
-json=safereturn(res,packet,True)[0]
-
-
-def parser(crawlerdic={}, timeout=20):
-    # example : date == "2020-3-10"
-    crawldate = crawlerdic["crawldate"]
-    item = crawlerdic["item"]
-    url = crawlerdic["url"]
-    header = crawlerdic["header"]
-    payload = crawlerdic["payload"]
-    m = crawlerdic["m"]
-
-    # debug for date =====================================================
-    try:
-        if pd.isnull(pd.Timestamp(crawldate)) is True:
-            crawlerdic["errormessage"] = "get None date value"
-            crawlerdic["stat"] = "inputdateerror"
-            return crawlerdic
-    except ValueError as e:
-        crawlerdic["errormessage"] = format_exc() + e
-        crawlerdic["stat"] = "inputdateerror"
-        return crawlerdic
-    except:
-        crawlerdic["errormessage"] = format_exc()
-        crawlerdic["stat"] = "othererrors"
-        return crawlerdic
-
-    # debug for url =====================================================
-    link = make_url(url=url, data=payload, headers=header, typ="post", timeout=timeout)
-    if isinstance(link, str) == True:
-        crawlerdic["errormessage"] = link
-        crawlerdic["stat"] = "badconnection"
-        return crawlerdic
-    elif pd.isnull(link) == True:
-        crawlerdic["errormessage"] = link
-        crawlerdic["stat"] = "badconnection"
-        return crawlerdic
-    elif link.status_code != re.codes.ok:
-        crawlerdic["errormessage"] = link.status_code
-        crawlerdic["stat"] = "badconnection"
-        return crawlerdic
-
-    # debug for jsontext ================================================
-    try:
-        jsontext = link.json()
-    except:
-        crawlerdic["errormessage"] = format_exc()
-        crawlerdic["data"] = link
-        crawlerdic["stat"] = "jsonerror"
-        return crawlerdic
-
-    if jsontext["stat"] != "OK":
-        crawlerdic["errormessage"] = jsontext["stat"]
-        crawlerdic["data"] = jsontext
-        crawlerdic["stat"] = "closed"
-        return crawlerdic
-
-    # prepare for saving ================================================
-    link.close()
-    jsontext["item"] = item
-    jsontext["crawldate"] = crawldate
-    jsontext["m"] = m
-    savepath = path.join(cf.cloud_path, r"warehouse", item,
-                         str(pd.to_datetime(crawldate).year),
-                         "{}_{}".format(item, crawldate))
-    picklesave(savepath, jsontext, cover=True)
-
-    crawlerdic["data"] = jsontext
-    crawlerdic["stat"] = str(datetime.now().date())
-    return crawlerdic
-
-
-# market == stock > item > title
-class management(object):
-    log_path = path.join(cf.cloud_path, "log.pkl")
-    warehouse_path = path.join(cf.cloud_path, "warehouse")
-    stocktable = pickleload(path.join(cf.cloud_path, r"stocktable.pkl"))
-    log = crawlerdictodf(typ="item")
-    mall = set([_["m"] for _ in crawlerdic.values()])
-    item = [_ for _ in crawlerdic]
-
-    # titleall       = [i for i in crawldic.values() for i in i["title"]]
-
-    def __init__(self, start=None, end=None):
-        self.start = start
-        self.end = end
-        self.log = self.log.loc[self.start:self.end:]
-        print(r"Renewing the log ... ")
-        if path.exists(self.log_path) is True:
-            old = pickleload(self.log_path)
-            self.log.loc[:, self.item] = data_renew(self.log.loc[:, self.item], old.loc[:, self.item])
-
-    def clearner_lis(self, item=[]):
-        if isinstance(item, list) is False:
-            print("Input error, item must be list")
-            return None
-        elif not item:
-            item = self.crawldic.keys()
-        p = self.warehouse_path
-        res = []
-        for k in item:
-            temp = next(walk(path.join(p, self.crawldic[k]["m"], k)))[2]
-            if not temp: continue
-            res += temp
-        return res
-
-    def findstock(self, io=r""):
-        io = io.split("_")
-        if len(io) == 2:
-            temp = self.stocktable.loc[(self.stocktable["代號"] == io[0]) & (self.stocktable["名稱"] == io[1]), :]
-        elif len(io) == 1:
-            temp = self.stocktable.loc[(self.stocktable["名稱"] == io[0]), :]
-        else:
-            return io
-        if temp.empty == True: return None
-        return temp["代號"] + "_" + temp["名稱"]
-
-
-# In[]
 if __name__ == "__main__":
-    stocktable_renew = True
-    m = management()
-    m.mall
-    log = m.log
-    log = log["2021-1-1":]
-    crawldata = dataframe_zip(df=log, col_include=m.item, key_include=["closed"], time=False)
-    # "badconnection","closed","jsonerror" , "wait"
-    multilis = multilisforcrawl(crawldata)
-    if stocktable_renew == True:
-        stocktablecrawl(timeout=15)
-    # In[]
-    try:
-        for payload in multilis:
-            print("crawling {}_{}".format(payload["crawldate"], payload["item"]))
-            res = parser(payload)
-            if "errormessage" in res:
-                print(res["stat"])
-                print(res["errormessage"])
-            elif "date" in res["data"]:
-                print("資料日期 ==> ", res["data"]["date"])
+    warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
+
+    stocklog = Log(warehousepath)
+    log = stocklog.findlog('source', 'log.pkl')
+    errorlog = stocklog.findlog('source', 'errorlog.pkl')
+    # 先看有沒有現有的log和errorlog
+    log = stocklog.updatelog(log, collection)
+    # 如果有就新增，沒有就自創一個
+    if errorlog is None:
+        errorlog = pd.DataFrame([])
+    # errorlog可以直接創一個空的df
+    log = log.replace({'succeed': 'wait'})
+    # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
+    log = logfromfolder(warehousepath, '.pkl', log, 'succeed')
+    # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
+
+    for ind, col in findval(log, 'wait'):
+        crawlerdic = collection[col]
+        crawlerdic['payload']['date'] = str(ind.date())
+        datapath = path.join(warehousepath, 'source', col)
+        try:
+            res = re.post(url=crawlerdic['url'], headers=randomheader(), data=crawlerdic['payload'], timeout=None)
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt ... content saving")
+            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            print("Log saved .")
+            sys.exit()
+
+        except Exception as e:
+            print("Unknowned error")
+            print("===============")
+            print(format_exc())
+            # 較詳細的錯誤訊息
+            print("===============")
+            print(e)
+            # 較簡陋的錯誤訊息
+            log.loc[log.index == ind, col] = 'request error'
+            errordic = {'crawlerdic': crawlerdic,
+                        'errormessage1': format_exc(),
+                        'errormessage2': e,
+                        'errormessage3': 'request failed'}
+            errorlog.loc[ind, col] = errordic
+            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            continue
+
+        if res.status_code == re.codes.ok:
+            # 只要result的結果是正確，就只剩下是友資料還是當天休市的差別
+            data = res.json()
+            if data['stat'] == 'ok':
+                log.loc[log.index == ind, col] = 'succeed'
             else:
-                print(res["stat"])
+                # 例假日或颱風假
+                log.loc[log.index == ind, col] = 'close'
+                picklesave(data=log, path=path.join(datapath, 'log.pkl'))
+                continue
+        else:
+            print("Unknowned error")
+            print("===============")
+            log.loc[log.index == ind, col] = 'result error'
+            errordic = {'crawlerdic': crawlerdic,
+                        'request': res,
+                        'requeststatus': res.status_code,
+                        'errormessage1': 'result error'}
+            errorlog.loc[ind, col] = errordic
+            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            continue
 
-            log.loc[log[res["item"]].index == res["crawldate"], res["item"]] = res["stat"]
-            print(log.loc[log[res["item"]].index == res["crawldate"], res["item"]])
-            picklesave(m.log_path, log, cover=True)
-            print("Log renewed .")
-        # break
-    except KeyboardInterrupt:
-        picklesave(m.log_path, log, cover=True)
-        print("KeyboardInterrupt ... content saving")
-        print("Log saved .")
-        sys.exit()
-    except Exception as e:
-        print("===============")
-        print(format_exc())
-        print("Unknowned error")
-        print(e)
-        picklesave(m.log_path, log, cover=True)
-        print("Log saved .")
-        sys.exit()
+        data['crawlerdic'] = crawlerdic
+        data['request'] = res
+        picklesave(data, path.join(datapath, col+'_'+str(datetime.datetime.today().date()))+'.pkl')
 
-# a = pickleload(r"/Users/stevenhsu/Documents/GitHub/trading/log.pkl")
-# a=a.iloc[:,:11]
-# picklesave(r"/Users/stevenhsu/Documents/GitHub/trading/log.pkl",a,cover=True)
+        # 把以月為頻率的資料要刪除之前的資料，留當月最新的就好，不用每天都留
+        if crawlerdic['freq'] == 'M':
+            daterange = pd.date_range(start=str(datetime.datetime.today().year)+'-'+str(datetime.datetime.today().month)+'-1', end=datetime.datetime.today()-datetime.timedelta(days=1), freq='D', inclusive='left')
+            for d in daterange:
+                if path.exists(path.join(datapath, col+'_'+str(d))+'.pkl'):
+                    remove(path.join(datapath, col+'_'+str(d))+'.pkl')
+
+        picklesave(log, path.join(datapath, 'log.pkl'))
