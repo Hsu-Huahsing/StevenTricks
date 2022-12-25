@@ -5,6 +5,7 @@ Created on Fri May 22 23:22:32 2020
 
 @author: mac
 """
+import os
 from os import path, remove
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
@@ -12,6 +13,8 @@ from StevenTricks.fileop import logfromfolder, picklesave
 from StevenTricks.warren.conf import collection
 from StevenTricks.warren.crawler.model.twse import Log
 import datetime
+from time import sleep
+from random import randint
 from traceback import format_exc
 import sys
 import requests as re
@@ -39,8 +42,13 @@ if __name__ == "__main__":
         crawlerdic = collection[col]
         crawlerdic['payload']['date'] = str(ind.date())
         datapath = path.join(warehousepath, 'source', col)
+        print(ind, col)
+        os.makedirs(datapath, exist_ok=True)
+
         try:
-            res = re.post(url=crawlerdic['url'], headers=randomheader(), data=crawlerdic['payload'], timeout=None)
+            res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=None)
+            print('sleep ...')
+            sleep(randint(10, 20))
         except KeyboardInterrupt:
             print("KeyboardInterrupt ... content saving")
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
