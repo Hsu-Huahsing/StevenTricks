@@ -20,7 +20,7 @@ import datetime
 import requests as re
 import pandas as pd
 
-datetime.datetime.today().strftime('%Y%m')
+
 def sleepteller(mode=None):
     if mode == 'long':
         time = randint(600, 660)
@@ -111,12 +111,11 @@ if __name__ == "__main__":
 
         data['crawlerdic'] = crawlerdic
         data['request'] = res
-        print(path.join(datapath, col+'_'+str(datetime.datetime.today().date()))+'.pkl')
-        picklesave(data, path.join(datapath, col+'_'+str(datetime.datetime.today().date()))+'.pkl')
+        picklesave(data, path.join(datapath, col+'_'+str(ind.date()))+'.pkl')
 
         # 把以月為頻率的資料要刪除之前的資料，留當月最新的就好，不用每天都留
         if crawlerdic['freq'] == 'M':
-            daterange = pd.date_range(start=datetime.datetime.today().strftime('%Y-%m-1'), end=datetime.datetime.today()-datetime.timedelta(days=1), freq='D', inclusive='left')
+            daterange = pd.date_range(start=ind.strftime('%Y-%m-1'), end=ind-datetime.timedelta(days=1), freq='D', inclusive='left')
             for d in daterange:
                 if path.exists(path.join(datapath, col+'_'+str(d))+'.pkl'):
                     remove(path.join(datapath, col+'_'+str(d))+'.pkl')
