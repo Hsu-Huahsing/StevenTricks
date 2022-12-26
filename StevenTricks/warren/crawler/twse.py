@@ -48,7 +48,7 @@ if __name__ == "__main__":
         try:
             res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=None)
             print('sleep ...')
-            sleep(randint(10, 20))
+            sleep(randint(20, 40))
         except KeyboardInterrupt:
             print("KeyboardInterrupt ... content saving")
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
@@ -72,12 +72,13 @@ if __name__ == "__main__":
             errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            sleep(randint(540, 600))
             continue
 
         if res.status_code == re.codes.ok:
             # 只要result的結果是正確，就只剩下是友資料還是當天休市的差別
             data = res.json()
-            if data['stat'] == 'ok':
+            if data['stat'] == 'OK':
                 log.loc[log.index == ind, col] = 'succeed'
             else:
                 # 例假日或颱風假
@@ -95,6 +96,7 @@ if __name__ == "__main__":
             errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            sleep(randint(540, 600))
             continue
 
         data['crawlerdic'] = crawlerdic
