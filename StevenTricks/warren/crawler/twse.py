@@ -5,20 +5,29 @@ Created on Fri May 22 23:22:32 2020
 
 @author: mac
 """
-import os
-from os import path, remove
+
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
 from StevenTricks.fileop import logfromfolder, picklesave
 from StevenTricks.warren.conf import collection
 from StevenTricks.warren.crawler.model.twse import Log
-import datetime
+from os import path, remove, makedirs
 from time import sleep
 from random import randint
 from traceback import format_exc
 import sys
+import datetime
 import requests as re
 import pandas as pd
+
+
+def sleepteller(mode):
+    if mode == 'long':
+        time = randint(600, 660)
+    else:
+        time = randint(20, 30)
+    print('Be about to sleep {}'.format(str(time)))
+    sleep(time)
 
 
 if __name__ == "__main__":
@@ -43,12 +52,12 @@ if __name__ == "__main__":
         crawlerdic['payload']['date'] = str(ind.date())
         datapath = path.join(warehousepath, 'source', col)
         print(ind, col)
-        os.makedirs(datapath, exist_ok=True)
+        makedirs(datapath, exist_ok=True)
 
         try:
             res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=None)
             print('sleep ...')
-            sleep(randint(20, 40))
+            sleepteller()
         except KeyboardInterrupt:
             print("KeyboardInterrupt ... content saving")
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
@@ -72,7 +81,7 @@ if __name__ == "__main__":
             errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
-            sleep(randint(540, 600))
+            sleepteller(mode='long')
             continue
 
         if res.status_code == re.codes.ok:
@@ -96,7 +105,7 @@ if __name__ == "__main__":
             errorlog.loc[ind, col] = [errordic]
             picklesave(data=log, path=path.join(datapath, 'log.pkl'))
             picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
-            sleep(randint(540, 600))
+            sleepteller(mode='long')
             continue
 
         data['crawlerdic'] = crawlerdic
