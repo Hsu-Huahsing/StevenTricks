@@ -21,7 +21,7 @@ import requests as re
 import pandas as pd
 
 
-def sleepteller(mode):
+def sleepteller(mode=None):
     if mode == 'long':
         time = randint(600, 660)
     else:
@@ -87,9 +87,13 @@ if __name__ == "__main__":
         if res.status_code == re.codes.ok:
             # 只要result的結果是正確，就只剩下是友資料還是當天休市的差別
             data = res.json()
+            print(data['stat'])
+            print('------------------')
             if data['stat'] == 'OK':
                 log.loc[log.index == ind, col] = 'succeed'
+                print(11111)
             else:
+                print(2222)
                 # 例假日或颱風假
                 log.loc[log.index == ind, col] = 'close'
                 picklesave(data=log, path=path.join(datapath, 'log.pkl'))
@@ -110,6 +114,7 @@ if __name__ == "__main__":
 
         data['crawlerdic'] = crawlerdic
         data['request'] = res
+        print(path.join(datapath, col+'_'+str(datetime.datetime.today().date()))+'.pkl')
         picklesave(data, path.join(datapath, col+'_'+str(datetime.datetime.today().date()))+'.pkl')
 
         # 把以月為頻率的資料要刪除之前的資料，留當月最新的就好，不用每天都留
