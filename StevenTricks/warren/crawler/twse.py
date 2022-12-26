@@ -20,7 +20,7 @@ import datetime
 import requests as re
 import pandas as pd
 
-
+datetime.datetime.today().strftime('%Y%m')
 def sleepteller(mode=None):
     if mode == 'long':
         time = randint(600, 660)
@@ -32,7 +32,6 @@ def sleepteller(mode=None):
 
 if __name__ == "__main__":
     warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
-
     stocklog = Log(warehousepath)
     log = stocklog.findlog('source', 'log.pkl')
     errorlog = stocklog.findlog('source', 'errorlog.pkl')
@@ -49,7 +48,7 @@ if __name__ == "__main__":
 
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
-        crawlerdic['payload']['date'] = str(ind.date())
+        crawlerdic['payload']['date'] = ind.date().strftime("%Y%m%d")
         datapath = path.join(warehousepath, 'source', col)
         print(ind, col)
         makedirs(datapath, exist_ok=True)
@@ -91,9 +90,7 @@ if __name__ == "__main__":
             print('------------------')
             if data['stat'] == 'OK':
                 log.loc[log.index == ind, col] = 'succeed'
-                print(11111)
             else:
-                print(2222)
                 # 例假日或颱風假
                 log.loc[log.index == ind, col] = 'close'
                 picklesave(data=log, path=path.join(datapath, 'log.pkl'))
@@ -119,7 +116,7 @@ if __name__ == "__main__":
 
         # 把以月為頻率的資料要刪除之前的資料，留當月最新的就好，不用每天都留
         if crawlerdic['freq'] == 'M':
-            daterange = pd.date_range(start=str(datetime.datetime.today().year)+'-'+str(datetime.datetime.today().month)+'-1', end=datetime.datetime.today()-datetime.timedelta(days=1), freq='D', inclusive='left')
+            daterange = pd.date_range(start=datetime.datetime.today().strftime('%Y-%m-1'), end=datetime.datetime.today()-datetime.timedelta(days=1), freq='D', inclusive='left')
             for d in daterange:
                 if path.exists(path.join(datapath, col+'_'+str(d))+'.pkl'):
                     remove(path.join(datapath, col+'_'+str(d))+'.pkl')
