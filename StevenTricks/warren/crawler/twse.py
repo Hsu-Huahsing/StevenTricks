@@ -59,8 +59,8 @@ if __name__ == "__main__":
             sleepteller()
         except KeyboardInterrupt:
             print("KeyboardInterrupt ... content saving")
-            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
             print("Log saved .")
             sys.exit()
 
@@ -78,8 +78,8 @@ if __name__ == "__main__":
                         'errormessage2': e,
                         'errormessage3': 'request failed'}
             errorlog.loc[ind, col] = [errordic]
-            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
             sleepteller(mode='long')
             continue
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
             else:
                 # 例假日或颱風假
                 log.loc[log.index == ind, col] = 'close'
-                picklesave(data=log, path=path.join(datapath, 'log.pkl'))
+                picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
                 continue
         else:
             print("Unknowned error")
@@ -104,14 +104,14 @@ if __name__ == "__main__":
                         'requeststatus': res.status_code,
                         'errormessage1': 'result error'}
             errorlog.loc[ind, col] = [errordic]
-            picklesave(data=log, path=path.join(datapath, 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(datapath, 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
             sleepteller(mode='long')
             continue
 
         data['crawlerdic'] = crawlerdic
         data['request'] = res
-        picklesave(data, path.join(datapath, col+'_'+str(ind.date()))+'.pkl')
+        picklesave(data=data, path=path.join(datapath, col+'_'+str(ind.date()))+'.pkl')
 
         # 把以月為頻率的資料要刪除之前的資料，留當月最新的就好，不用每天都留
         if crawlerdic['freq'] == 'M':
@@ -120,4 +120,4 @@ if __name__ == "__main__":
                 if path.exists(path.join(datapath, col+'_'+str(d))+'.pkl'):
                     remove(path.join(datapath, col+'_'+str(d))+'.pkl')
 
-        picklesave(log, path.join(datapath, 'log.pkl'))
+        picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
