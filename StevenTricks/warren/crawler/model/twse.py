@@ -19,6 +19,7 @@ class Log:
     def findlog(self, logtype, kind):
         # logtype could be 'source' 'cleaned' ''
         # kind could be 'log.pkl' 'errorlog.pkl'
+        print(join(self.warehousepath, logtype, kind))
         if exists(join(self.warehousepath, logtype, kind)) is True:
             return pickleload(join(self.warehousepath, logtype, kind))
         return None
