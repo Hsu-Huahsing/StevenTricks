@@ -89,13 +89,15 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
         res = res.loc[~(res.loc[:, "file"].str.contains("|".join(fileexclude), na=True))]
     return res
 
+# PathWalk_df(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source', fileinclude=['.pkl'], fileexclude=['log'])
+
 
 def logfromfolder(path, fileinclude, fileexclude, log, fillval):
+    # fileinclude and fileexclude should be []
     # 標準檔名是col_yyyy-mm-dd.pkl所以用_可以拆分出col和date
     # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
     pathdf = PathWalk_df(path=path, fileinclude=fileinclude, fileexclude=fileexclude)
     for name in pathdf['file']:
-        print(name)
         col = name.split('_')[0]
         ind = name.split('_')[1].split('.')[0]
         log.loc[ind, col] = fillval
