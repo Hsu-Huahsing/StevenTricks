@@ -19,8 +19,9 @@ class Log:
     def findlog(self, logtype, kind):
         # logtype could be 'source' 'cleaned' ''
         # kind could be 'log.pkl' 'errorlog.pkl'
-        print(join(self.warehousepath, logtype, kind))
+        # print(join(self.warehousepath, logtype, kind))
         if exists(join(self.warehousepath, logtype, kind)) is True:
+            print('exists')
             return pickleload(join(self.warehousepath, logtype, kind))
         return None
 
@@ -29,7 +30,7 @@ class Log:
             log = periodictable(periodict)
         else:
             latestlog = periodictable(periodict, datemin=datetime.now())
-            log = pd.concat([periodict, latestlog])
+            log = pd.concat([periodictdf, latestlog])
         return log
 
     def savelog(self, log, logtype, kind):

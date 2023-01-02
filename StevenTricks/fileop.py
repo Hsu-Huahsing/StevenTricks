@@ -95,7 +95,9 @@ def logfromfolder(path, fileinclude, fileexclude, log, fillval):
     # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
     pathdf = PathWalk_df(path=path, fileinclude=fileinclude, fileexclude=fileexclude)
     for name in pathdf['file']:
+        print(name)
         col = name.split('_')[0]
         ind = name.split('_')[1].split('.')[0]
         log.loc[ind, col] = fillval
+        print(log.loc[ind, col])
     return log

@@ -31,7 +31,7 @@ def sleepteller(mode=None):
 
 
 if __name__ == "__main__":
-    warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
+    warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source'
     stocklog = Log(warehousepath)
     log = stocklog.findlog('source', 'log.pkl')
     errorlog = stocklog.findlog('source', 'errorlog.pkl')
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
         crawlerdic['payload']['date'] = ind.date().strftime("%Y%m%d")
-        datapath = path.join(warehousepath, 'source', col)
+        datapath = path.join(warehousepath, col)
         print(ind, col)
         makedirs(datapath, exist_ok=True)
 
@@ -59,8 +59,8 @@ if __name__ == "__main__":
             sleepteller()
         except KeyboardInterrupt:
             print("KeyboardInterrupt ... content saving")
-            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'errorlog.pkl'))
             print("Log saved .")
             sys.exit()
 
@@ -78,8 +78,8 @@ if __name__ == "__main__":
                         'errormessage2': e,
                         'errormessage3': 'request failed'}
             errorlog.loc[ind, col] = [errordic]
-            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'errorlog.pkl'))
             sleepteller(mode='long')
             continue
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
             else:
                 # 例假日或颱風假
                 log.loc[log.index == ind, col] = 'close'
-                picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
+                picklesave(data=log, path=path.join(warehousepath, 'log.pkl'))
                 continue
         else:
             print("Unknowned error")
@@ -104,8 +104,8 @@ if __name__ == "__main__":
                         'requeststatus': res.status_code,
                         'errormessage1': 'result error'}
             errorlog.loc[ind, col] = [errordic]
-            picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
-            picklesave(data=errorlog, path=path.join(warehousepath, 'source', 'errorlog.pkl'))
+            picklesave(data=log, path=path.join(warehousepath, 'log.pkl'))
+            picklesave(data=errorlog, path=path.join(warehousepath, 'errorlog.pkl'))
             sleepteller(mode='long')
             continue
 
@@ -120,4 +120,4 @@ if __name__ == "__main__":
                 if path.exists(path.join(datapath, col+'_'+str(d))+'.pkl'):
                     remove(path.join(datapath, col+'_'+str(d))+'.pkl')
 
-        picklesave(data=log, path=path.join(warehousepath, 'source', 'log.pkl'))
+        picklesave(data=log, path=path.join(warehousepath, 'log.pkl'))
