@@ -7,7 +7,7 @@ warehouse = {
     'log': 'log'
 }
 
-colname_dic={
+colname_dic = {
     "上市認購(售)權證": "上市認購售權證",
     "臺灣存託憑證(TDR)": "台灣存託憑證",
     "受益證券-不動產投資信託": "受益證券_不動產投資信託",
@@ -198,7 +198,6 @@ collection = {
 
 stocklist = {
     'url': r'https://isin.twse.com.tw/isin/C_public.jsp?strMode={}',
-    'charset': 'cp950'
 }
 
 colname_dic = {

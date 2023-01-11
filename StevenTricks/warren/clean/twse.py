@@ -8,44 +8,59 @@ Created on Mon Jul 20 21:13:14 2020
 import random
 from copy import deepcopy
 from datetime import datetime
-from StevenTricks.warren.conf import colname_dic
 import pandas as pd
 import numpy as np
-
-now=datetime.now().date()
-
-
+import requests as re
+from StevenTricks.warren.conf import stocklist, colname_dic
+now = datetime.now().date()
+mode = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+res = re.get(stocklist['url'].format(str(1)))
+r = pd.read_html(stocklist['url'].format(str(2)), encoding='cp950')
+r = pd.DataFrame(r[0])
+a=r.reset_index(drop=True).reset_index()
+r.loc[r.duplicated(keep=False), 'product']
+r.T
+pd.DataFrame(res)
 def stocktablecrawl(maxn=13, timeout=180, pk="ISINCode"):
-    dm = dbmanager(user="root")
-    dm.choosedb(db="stocktable")
+    # maxn 是指這個網頁支援的產品類型總類，目前最多到12，因此預設是13
+    # dm = dbmanager(user="root")
+    # dm.choosedb(db="stocktable")
 
     for _ in range(1, maxn, 1):
-        df = make_url(url=stocktable["url"].format(_), timeout=timeout, typ="html", charset=stocktable["charset"])
+        df = pd.read_html(stocklist['url'].format(str(_)), encoding='cp950')
         df = pd.DataFrame(df[0])
 
         if df.empty is True:
-            print("stocktable No:{} ___empty crawled result".format(_))
+            print("stocktable No:{} ___empty crawled result".format(str(_)))
             continue
 
         df = df.reset_index(drop=True).reset_index()
-
+        # 先弄出一列是連續數字出來
         tablename = [list(set(_)) for _ in df.values if len(set(_)) == 2]
+        # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
+        df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
+        # 把用不到的數列先刪掉，包括剛剛的index
+        df.loc[:, "date"] = datetime.now().date()
+        # 增加一列日期
 
-        df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1, inplace=True)
-        df.loc[:, "date"] = pd.to_datetime(cf.now, infer_datetime_format=True)
-
+        # 以下對特殊欄位進行特殊處理
         if "指數代號及名稱" in df:
             df.loc[:, ["代號", "名稱"]] = df.loc[:, "指數代號及名稱"].str.split(" |　", expand=True, n=1).rename(
                 columns={0: "代號", 1: "名稱"})
         elif "有價證券代號及名稱" in df:
             df.loc[:, ["代號", "名稱"]] = df.loc[:, "有價證券代號及名稱"].str.split(" |　", expand=True, n=1).rename(
                 columns={0: "代號", 1: "名稱"})
-        df = df.rename(columns=rename_dic)
+
+        df = df.rename(columns=colname_dic)
+        # 把處理好的欄位重新命名
+
         if pk not in df:
             print("no primary key")
             print(_)
+            print(pk)
+            print(df.columns)
             continue
-        # 以上整理primary key
+        # 以上檢查是否有變更primary key欄位的狀況
 
         if len(tablename) > 1:
             name_index = [(a, b) for a, b in zip(tablename, tablename[1:] + [[None]])]
