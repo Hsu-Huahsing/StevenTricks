@@ -5,7 +5,6 @@ Created on Fri May 22 23:22:32 2020
 
 @author: mac
 """
-
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
 from StevenTricks.fileop import logfromfolder, picklesave
@@ -117,11 +116,10 @@ if __name__ == "__main__":
 
             # if startname in rename_dic:
             #     startname = rename_dic[startname]
-            df_sub.loc[:, "product"] = startname
+            # df_sub.loc[:, "product"] = startname
             datapath = path.join(db_path, 'source', 'stocklist', datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
             # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
-
 
 
     for ind, col in findval(log, 'wait'):
