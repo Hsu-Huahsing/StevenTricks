@@ -12,16 +12,15 @@ from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, s
 import pickle
 
 
-def getdir(path):
-    if isfile(path) is True:
-        path = abspath(dirname(path))
-    return path
+# def getdir(path):
+#     if isfile(path) is True:
+#         path = abspath(dirname(path))
+#     return path
 
 
 def picklesave(data, path):
     # path要精確到檔名
-    path = getdir(path)
-    makedirs(path, exist_ok=True)
+    makedirs(abspath(dirname(path)), exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 

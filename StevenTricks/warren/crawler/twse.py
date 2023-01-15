@@ -95,8 +95,8 @@ if __name__ == "__main__":
         else:
             # 沒有產品名，就單獨一個dataframe，那就不用特別處理直接儲存就好
             table = "無細項分類的商品{}".format(str(_))
-            df.loc[:, "product"] = table
-            datapath = path.join(db_path, 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
+            # df.loc[:, "product"] = table
+            datapath = path.join(db_path, 'source', 'stocklist', datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
             picklesave(df, datapath)
             # dm.to_sql_ex(df=df, table=table, pk=pk)
             continue
@@ -118,7 +118,7 @@ if __name__ == "__main__":
             # if startname in rename_dic:
             #     startname = rename_dic[startname]
             df_sub.loc[:, "product"] = startname
-            datapath = path.join(db_path, 'stocklist', startname, datetime.datetime.today().strftime(startname + '_%Y-%m-%d'))
+            datapath = path.join(db_path, 'source', 'stocklist', datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
             # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
 
