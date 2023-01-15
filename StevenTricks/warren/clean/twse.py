@@ -10,6 +10,8 @@ from copy import deepcopy
 import pandas as pd
 import numpy as np
 import requests as re
+from StevenTricks.warren.crawler.model.twse import Log
+
 now = datetime.now().date()
 mode = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 res = re.get(stocklist['url'].format(str(1)))
@@ -114,6 +116,4 @@ def stocktable_combine(df=pd.DataFrame([]), stocktable=pd.DataFrame([])):
 
 
 if __name__ == '__main__':
-    l = []
-    # l = crawlerdictodf()
-    # l.loc[None:"2020-4",["i每日收盤行情"]]
+    pass

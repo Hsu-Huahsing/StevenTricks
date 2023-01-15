@@ -9,7 +9,7 @@ from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
 from StevenTricks.fileop import logfromfolder, picklesave
 from StevenTricks.warren.conf import collection, db_path, dailycollection
-from StevenTricks.warren.crawler.model.twse import Log
+from StevenTricks.warren.twse import Log
 from os import path, remove, makedirs
 from time import sleep
 from random import randint
