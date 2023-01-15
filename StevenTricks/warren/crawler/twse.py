@@ -95,12 +95,12 @@ if __name__ == "__main__":
             # 沒有產品名，就單獨一個dataframe，那就不用特別處理直接儲存就好
             table = "無細項分類的商品{}".format(str(_))
             # df.loc[:, "product"] = table
-            datapath = path.join(db_path, 'source', 'stocklist', datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
+            datapath = path.join(db_path, 'source', 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
             picklesave(df, datapath)
             # dm.to_sql_ex(df=df, table=table, pk=pk)
             continue
         # 利用同一個row的重複值來判斷商品項目名稱，同時判斷儲存的方式
-
+        # 對於有產品細項名稱的商品開始做以下特殊處理
         for nameindex in name_index:
             start = nameindex[0]
             end = nameindex[1]
@@ -117,10 +117,9 @@ if __name__ == "__main__":
             # if startname in rename_dic:
             #     startname = rename_dic[startname]
             # df_sub.loc[:, "product"] = startname
-            datapath = path.join(db_path, 'source', 'stocklist', datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
+            datapath = path.join(db_path, 'source', 'stocklist', startname, datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
             # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
-
 
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
