@@ -7,17 +7,27 @@ Created on Tue Apr 26 15:53:48 2022
 
 import pandas as pd
 from os import makedirs, walk, remove
-from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, splitext
+from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, splitext, dirname
 # from sys import platform
 import pickle
 
 
+def getdir(path):
+    if isfile(path) is True:
+        path = abspath(dirname(path))
+    return path
+
+
 def picklesave(data, path):
+    # path要精確到檔名
+    path = getdir(path)
+    makedirs(path, exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
 
 def pickleload(path):
+    # path要精確到檔名
     with open(path, 'rb') as f:
         data = pickle.load(f)
         return data

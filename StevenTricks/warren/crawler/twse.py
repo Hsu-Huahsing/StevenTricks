@@ -9,7 +9,7 @@ Created on Fri May 22 23:22:32 2020
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
 from StevenTricks.fileop import logfromfolder, picklesave
-from StevenTricks.warren.conf import collection
+from StevenTricks.warren.conf import collection, db_path, dailycollection
 from StevenTricks.warren.crawler.model.twse import Log
 from os import path, remove, makedirs
 from time import sleep
@@ -19,8 +19,6 @@ import sys
 import datetime
 import requests as re
 import pandas as pd
-
-warehousepath = r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock'
 
 
 def sleepteller(mode=None):
@@ -33,7 +31,7 @@ def sleepteller(mode=None):
 
 
 if __name__ == "__main__":
-    stocklog = Log(warehousepath)
+    stocklog = Log(db_path)
     log = stocklog.findlog('source', 'log.pkl')
     errorlog = stocklog.findlog('source', 'errorlog.pkl')
     # 先看有沒有現有的log和errorlog
@@ -44,13 +42,92 @@ if __name__ == "__main__":
     # errorlog可以直接創一個空的df
     log = log.replace({'succeed': 'wait'})
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
-    log = logfromfolder(path.join(warehousepath, 'source'), fileinclude=['.pkl'], fileexclude=['log'], log=log, fillval='succeed')
+    log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
+
+    for _ in dailycollection['stocklist']['modelis']:
+
+        df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
+        sleepteller()
+        df = pd.DataFrame(df[0])
+        # read_html是返回list，所以要取出0
+
+        if df.empty is True:
+            # 代表什麼都沒返回
+            print("stocktable No:{} ___empty crawled result".format(str(_)))
+            continue
+
+        df = df.reset_index(drop=True).reset_index()
+        # 先弄出一列是連續數字出來
+        tablename = [list(set(_)) for _ in df.values if len(set(_)) == 2]
+        # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
+        df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
+        # 把用不到的數列先刪掉，包括剛剛的index
+        # df.loc[:, "date"] = datetime.now().date()
+        # 增加一列日期
+
+        # 以下對特殊欄位進行特殊處理
+        # if "指數代號及名稱" in df:
+        #     df.loc[:, ["代號", "名稱"]] = df.loc[:, "指數代號及名稱"].str.split(" |　", expand=True, n=1).rename(
+        #         columns={0: "代號", 1: "名稱"})
+        # elif "有價證券代號及名稱" in df:
+        #     df.loc[:, ["代號", "名稱"]] = df.loc[:, "有價證券代號及名稱"].str.split(" |　", expand=True, n=1).rename(
+        #         columns={0: "代號", 1: "名稱"})
+
+        # df = df.rename(columns=colname_dic)
+        # 把處理好的欄位重新命名
+
+        # if pk not in df:
+        #     print("no primary key")
+        #     print(_)
+        #     print(pk)
+        #     print(df.columns)
+        #     continue
+        # 以上檢查是否有變更primary key欄位的狀況
+
+        # tablename
+        if len(tablename) > 1:
+            # 如果有兩種以上產品名的情況
+            name_index = [(a, b) for a, b in zip(tablename, tablename[1:] + [[None]])]
+        elif len(tablename) == 1:
+            # 只有一種產品名的情況
+            name_index = [(tablename[0], [None])]
+        else:
+            # 沒有產品名，就單獨一個dataframe，那就不用特別處理直接儲存就好
+            table = "無細項分類的商品{}".format(str(_))
+            df.loc[:, "product"] = table
+            datapath = path.join(db_path, 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
+            picklesave(df, datapath)
+            # dm.to_sql_ex(df=df, table=table, pk=pk)
+            continue
+        # 利用同一個row的重複值來判斷商品項目名稱，同時判斷儲存的方式
+
+        for nameindex in name_index:
+            start = nameindex[0]
+            end = nameindex[1]
+
+            startname, startint = [_ for _ in start if isinstance(_, str) is True][0], [_ for _ in start if isinstance(_, str) is False][0]
+            endint = [_ for _ in end if isinstance(_, str) is False][0]
+            # 先抓出起始的值和尾端值然後用slice來做切割，把資料分段儲存進table
+
+            if end[0] is None:
+                df_sub = df[startint + 1:]
+            else:
+                df_sub = df[startint + 1:endint]
+
+            # if startname in rename_dic:
+            #     startname = rename_dic[startname]
+            df_sub.loc[:, "product"] = startname
+            datapath = path.join(db_path, 'stocklist', startname, datetime.datetime.today().strftime(startname + '_%Y-%m-%d'))
+            picklesave(df_sub, datapath)
+            # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
+
+
 
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
         crawlerdic['payload']['date'] = ind.date().strftime("%Y%m%d")
-        datapath = path.join(warehousepath, 'source', col)
+        datapath = path.join(db_path, 'source', col)
         print(ind, col)
         makedirs(datapath, exist_ok=True)
 
