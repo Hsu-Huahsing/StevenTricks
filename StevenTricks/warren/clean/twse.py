@@ -11,11 +11,10 @@ import pandas as pd
 import numpy as np
 import requests as re
 from os.path import join
-from StevenTricks.fileop import PathWalk_df
+from StevenTricks.fileop import PathWalk_df, pickleload
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path
 import datetime
-now = datetime.now().date()
 mode = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 res = re.get(stocklist['url'].format(str(1)))
 r = pd.read_html(stocklist['url'].format(str(2)), encoding='cp950')
@@ -118,7 +117,14 @@ def stocktable_combine(df=pd.DataFrame([]), stocktable=pd.DataFrame([])):
     return df
 
 
+def type1(df):
+
+    return
+
+
 if __name__ == '__main__':
     # stocklog = Log(db_path)
     # log = stocklog.findlog('source', 'log.pkl')
     data = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
+    df = pickleload(path=data['path'][0])
+    df.keys()

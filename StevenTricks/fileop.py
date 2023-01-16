@@ -96,7 +96,7 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
     res = res.loc[res.loc[:, "file"].str.contains("|".join(fileinclude), na=False)]
     if fileexclude:
         res = res.loc[~(res.loc[:, "file"].str.contains("|".join(fileexclude), na=True))]
-    return res
+    return res.reset_index(drop=True)
 
 # PathWalk_df(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source', fileinclude=['.pkl'], fileexclude=['log'])
 
