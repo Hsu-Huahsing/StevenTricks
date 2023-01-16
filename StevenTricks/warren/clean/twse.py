@@ -117,6 +117,27 @@ def stocktable_combine(df=pd.DataFrame([]), stocktable=pd.DataFrame([])):
     return df
 
 
+keydict = {
+    "col": ["field"],
+    "value": ["data", "list"],
+    "title": ["title"]
+        }
+
+
+def getkeys(data):
+    product = {
+        "col": [],
+        "value": [],
+        "title": [],
+    }
+    for key in sorted(data.keys()):
+        for k, i in keydict.items():
+            i = [key for _ in i if _ in key.lower()]
+            if i:
+                product[k] += i
+    return pd.DataFrame(product)
+
+
 def type1(df):
 
     return
@@ -125,6 +146,6 @@ def type1(df):
 if __name__ == '__main__':
     # stocklog = Log(db_path)
     # log = stocklog.findlog('source', 'log.pkl')
-    data = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
-    df = pickleload(path=data['path'][0])
-    df.keys()
+    files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
+    filedict = pickleload(path=files['path'][0])
+    getkeys(filedict)

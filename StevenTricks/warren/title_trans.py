@@ -16,11 +16,7 @@ from steventricks.mighty import pickleload, picklesave,  turntofloat, df_append,
 from packet import  search_title,rename_dic,stocktable_combine
 from steventricks.mysqldb import dbmanager
 
-key_dict = {
-    "col": ["field"],
-    "value": ["data", "list"],
-    "title": ["title"]
-        }
+
 
 errordict = {
     "titlename_error":{},
@@ -30,33 +26,8 @@ errordict = {
     "no_data"        :{},
             }
 
-def getkeys(data):
-    product = {
-        "col"  : [],
-        "value": [],
-        "title": [],
-    }
-    for key in sorted(data.keys()):
-        for k, i in key_dict.items():
-            i = [key for _ in i if _ in key.lower()]
-            if i: product[k] += i
-    return pd.DataFrame(product)
 
-class logmanagement(object):
-    def __init__(self,log="title_log.pkl"):
-        self.log_path=join(cf.cloud_path,log)
-        if exists(self.log_path) is True:
-            self.log = fileload(self.log_path)[0][1]
-        elif exists(self.log_path) is False:
-            self.log = {}
-    def log_exists(self,key="",value=""):
-        if key in self.log : 
-            if value in self.log[key]:
-                return True
-        return False
-    def log_append(self,key="",value=""):
-        if key not in self.log: self.log[key]=[]
-        if key in self.log    : self.log[key].append(value)
+
         
 gc.disable()
 debug=False
