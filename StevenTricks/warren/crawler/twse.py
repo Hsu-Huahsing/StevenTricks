@@ -129,7 +129,7 @@ if __name__ == "__main__":
         makedirs(datapath, exist_ok=True)
 
         try:
-            res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=None)
+            res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=(3,7))
             print('sleep ...')
             sleepteller()
         except KeyboardInterrupt:
