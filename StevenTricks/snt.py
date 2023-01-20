@@ -12,6 +12,12 @@ import locale
 import pandas as pd
 
 
+def findbylist(lis, text):
+    # 可以給出一連串文字，放在list裏面，只要list裡面有其中一個文字是在text裡面的話，那就會返回搜尋結果，是一個list
+    # 返回的字串以lis裡面匹配的為主
+    return re.findall('|'.join([re.escape(_) for _ in lis]), text)
+
+
 def isinstance_dfiter(df):
     # to tell the df if it is iterable or not
     try:
@@ -24,14 +30,14 @@ def isinstance_dfiter(df):
         return False
     
     
-def tonumeric_int( char ):
+def tonumeric_int(char):
     # 用來判斷是否為數字，盡量返回整數，如果不是浮點數也不是整數就返回原來的字符
-    try :
-        res = float( char )
-    except :
+    try:
+        res = float(char)
+    except:
         return char
     
-    try :
+    try:
         if res == int( char ) : 
             return int( char )
         else :

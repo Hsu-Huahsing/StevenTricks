@@ -17,7 +17,6 @@ from packet import  search_title,rename_dic,stocktable_combine
 from steventricks.mysqldb import dbmanager
 
 
-
 errordict = {
     "titlename_error":{},
     "newtitle"       :{},
@@ -64,7 +63,8 @@ for file_path in data_dir["path"]:
             title=title[0]
         elif len(title)>1:
             print(title)
-            if item not in errordict["titlename_error"]:errordict["titlename_error"][item] = ["{}_{}".format(crawldate,",".join(title))]
+            if item not in errordict["titlename_error"]:
+                errordict["titlename_error"][item] = ["{}_{}".format(crawldate,",".join(title))]
             errordict["titlename_error"][item].append("{}_{}".format(crawldate,",".join(title)))
             continue
         elif not title:
@@ -80,7 +80,8 @@ for file_path in data_dir["path"]:
 # 沒有在titlezip代表log裡面已經有資料了，不用再找第二次，所以跳出
 
         print(title,"=========================")
-        if m.log_exists(key=title,value=filename) is True:continue
+        if m.log_exists(key=title,value=filename) is True:
+            continue
 
         print(title,"2=========================")
         col = data[col]
@@ -99,14 +100,14 @@ for file_path in data_dir["path"]:
         df.drop("前日餘額",axis=1,inplace=True,errors="ignore")
         df.replace(",","",regex=True,inplace=True)
         df = df.rename(columns=rename_dic)
-        df.loc[:,"date"]=pd.to_datetime(crawldate)
+        df.loc[:, "date"] = pd.to_datetime(crawldate)
 
-        print(title,"3=========================")
+        print(title, "3=========================")
 
         # if "漲跌" in title:
         #     raise  KeyboardInterrupt
         
-        if "融資融券" in title :
+        if "融資融券" in title:
             df.columns = ",".join(df.columns).replace("買進","融券買進").replace("融券買進","融資買進",1).split(",")
             df.columns = ",".join(df.columns).replace("賣出","融券賣出").replace("融券賣出","融資賣出",1).split(",")
             df.columns = ",".join(df.columns).replace("今日餘額","今日融券餘額").replace("今日融券餘額","今日融資餘額",1).split(",")
@@ -190,9 +191,10 @@ for file_path in data_dir["path"]:
             else :
                 df = stocktable_combine(df=df, stocktable=stocktable)
                 for product in df["product"].unique():
-                    if pd.isnull(product) is True : product = "無細項分類商品"
+                    if pd.isnull(product) is True:
+                        product = "無細項分類商品"
                     dm.choosedb(db=product)
-                    for stock in df.loc[df["product"]==product,:].index:
+                    for stock in df.loc[df["product"] == product, :].index:
                         print("\r{}".format(stock),end="")
                         newdf = df.loc[df.index.isin([stock]),:]
                         dm.to_sql_ex(df=newdf.drop("product",axis=1),table=stock,pk=pk)

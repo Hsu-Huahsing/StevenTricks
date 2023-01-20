@@ -11,9 +11,10 @@ import pandas as pd
 import numpy as np
 import requests as re
 from os.path import join
+from StevenTricks.snt import findbylist
 from StevenTricks.fileop import PathWalk_df, pickleload
 from StevenTricks.warren.twse import Log
-from StevenTricks.warren.conf import db_path
+from StevenTricks.warren.conf import db_path, colname_dic, numericol
 import datetime
 mode = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 res = re.get(stocklist['url'].format(str(1)))
@@ -26,23 +27,7 @@ pd.DataFrame(res)
 
 
 
-def multilisforcrawl(itemlis=[], crawldic=crawlerdic):
-    # print(itemlis)
-    res = []
-    for i in itemlis:
-        date = i[0]
-        item = i[1]
-        if item not in crawldic:
-            continue
 
-        crawl = deepcopy(crawldic[item])
-        dname = crawl["dname"]
-        crawl["payload"][dname] = datesplit(date)
-        crawl["item"] = item
-        crawl["crawldate"] = date
-        crawl["header"] = next(iter_headers())
-        res.append(crawl)
-    return res
 
 
 def get_item(title):
@@ -117,7 +102,7 @@ def stocktable_combine(df=pd.DataFrame([]), stocktable=pd.DataFrame([])):
     return df
 
 
-keydict = {
+productkey = {
     "col": ["field"],
     "value": ["data", "list"],
     "title": ["title"]
@@ -125,27 +110,60 @@ keydict = {
 
 
 def getkeys(data):
-    product = {
+    productcol = {
         "col": [],
         "value": [],
         "title": [],
-    }
+        }
     for key in sorted(data.keys()):
-        for k, i in keydict.items():
+        for k, i in productkey.items():
             i = [key for _ in i if _ in key.lower()]
             if i:
-                product[k] += i
-    return pd.DataFrame(product)
+                productcol[k] += i
+    return pd.DataFrame(productcol)
 
 
-def type1(df):
+def productdict(source, key):
+    productdict = {}
+    for col, value, title in key.values:
+        if not source[value]:
+            continue
+        df = pd.DataFrame(data=source[value], columns=source[col])
+        productdict[source[title]] = df
+    return productdict
 
-    return
+
+def type1(df, key):
+    df = df.replace({",":""},regex=True)
+    df = df.rename(columns=colname_dic)
+    df = df[numericol[key]].apply(pd.to_numeric, errors='coerce')
+    return df
+
+def cleaner(data):
+    keydf = getkeys(data)
+    productdict()
 
 
 if __name__ == '__main__':
-    # stocklog = Log(db_path)
-    # log = stocklog.findlog('source', 'log.pkl')
+    stocklog = Log(db_path)
+    log = stocklog.findlog('source', 'log.pkl')
     files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
     filedict = pickleload(path=files['path'][0])
-    getkeys(filedict)
+    filedict.keys()
+    filedict['subtitle6']
+    keydf = getkeys(filedict)
+    productdict = productdict(source=filedict, key=keydf)
+    import re
+    for key, df in productdict.items():
+        # find = findbylist([re.escape(_) for _ in ['每日收盤行情', "價格指數(臺灣證券交易所)"]], key)
+        find = findbylist(['每日收盤行情', "價格指數(臺灣證券交易所)"], key)
+        if find:
+            df = type1(df, colname_dic.get(find[0], find[0]))
+        else:
+            break
+        print(key, df)
+
+
+
+    filedict.keys()
+    filedict['date']

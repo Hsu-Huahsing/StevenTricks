@@ -8,6 +8,7 @@ warehouse = {
 }
 
 colname_dic = {
+    '價格指數(臺灣證券交易所)': '價格指數_臺灣證券交易所',
     "上市認購(售)權證": "上市認購售權證",
     "臺灣存託憑證(TDR)": "台灣存託憑證",
     "受益證券-不動產投資信託": "受益證券_不動產投資信託",
@@ -56,6 +57,11 @@ headers = {
     'chromewin': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.70 Safari/537.36',
     'firefoxmac': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:70.0) Gecko/20100101 Firefox/70.0',
     'firefoxwin': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0'
+}
+
+numericol = {
+    "每日收盤行情": ['成交股數', '成交筆數', '成交金額', '開盤價', '最高價', '最低價', '收盤價', '漲跌價差', '最後揭示買價', '最後揭示買量', '最後揭示賣價', '最後揭示賣量', '本益比'],
+    "價格指數(臺灣證券交易所)": ['收盤指數', '漲跌點數', '漲跌百分比%'],
 }
 
 collection = {
