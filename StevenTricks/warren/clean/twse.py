@@ -5,6 +5,7 @@ Created on Mon Jul 20 21:13:14 2020
 
 @author: stevenhsu
 """
+import os.path
 import random
 from copy import deepcopy
 import pandas as pd
@@ -12,7 +13,7 @@ import numpy as np
 import requests as re
 from os.path import join
 from StevenTricks.snt import findbylist
-from StevenTricks.fileop import PathWalk_df, pickleload
+from StevenTricks.fileop import PathWalk_df, pickleload, filename
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path, colname_dic, numericol
 import datetime
@@ -139,9 +140,15 @@ def type1(df, key):
     df = df[numericol[key]].apply(pd.to_numeric, errors='coerce')
     return df
 
+
 def cleaner(data):
     keydf = getkeys(data)
     productdict()
+
+
+fundic = {
+
+}
 
 
 if __name__ == '__main__':
@@ -149,14 +156,16 @@ if __name__ == '__main__':
     log = stocklog.findlog('source', 'log.pkl')
     files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
     filedict = pickleload(path=files['path'][0])
+    splitext(files['path'][0])
+    filedict
     filedict.keys()
-    filedict['subtitle6']
+    pd.to_datetime(filedict['date'])
+    filedict['crawlerdic']['SubItem']
     keydf = getkeys(filedict)
     productdict = productdict(source=filedict, key=keydf)
     import re
     for key, df in productdict.items():
-        # find = findbylist([re.escape(_) for _ in ['每日收盤行情', "價格指數(臺灣證券交易所)"]], key)
-        find = findbylist(['每日收盤行情', "價格指數(臺灣證券交易所)"], key)
+        find = findbylist(filedict['crawlerdic']['SubItem'], key)
         if find:
             df = type1(df, colname_dic.get(find[0], find[0]))
         else:

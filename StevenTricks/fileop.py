@@ -7,11 +7,13 @@ Created on Tue Apr 26 15:53:48 2022
 
 import pandas as pd
 from os import makedirs, walk, remove
-from os.path import splitext, exists, pardir, abspath, isfile, samefile, join, splitext, dirname
+from os.path import exists, pardir, abspath, isfile, samefile, join, splitext, dirname, basename
 # from sys import platform
 import pickle
 
 
+def filename(path):
+    return basename(splitext(path)[0])
 # def getdir(path):
 #     if isfile(path) is True:
 #         path = abspath(dirname(path))
