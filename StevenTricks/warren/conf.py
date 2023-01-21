@@ -76,7 +76,7 @@ collection = {
         'freq': 'D',
         'datemin': '2004-2-11',
         "m": "market",
-        'SubItem': ["價格指數(臺灣證券交易所)", "價格指數(跨市場)", "價格指數(臺灣指數公司)", "報酬指數(臺灣證券交易所)", "報酬指數(跨市場)",
+        'subtitle': ["價格指數(臺灣證券交易所)", "價格指數(跨市場)", "價格指數(臺灣指數公司)", "報酬指數(臺灣證券交易所)", "報酬指數(跨市場)",
                      "報酬指數(臺灣指數公司)", "大盤統計資訊", "漲跌證券數合計", "每日收盤行情"],
     },
     "信用交易統計": {
@@ -89,7 +89,7 @@ collection = {
         'freq': 'D',
         'datemin': '2001-1-1',
         "m": "market",
-        'SubItem': ["融資融券彙總", "信用交易統計"],
+        'subtitle': ["融資融券彙總", "信用交易統計"],
         },
     "市場成交資訊": {
         'url': r'https://www.twse.com.tw/exchangeReport/FMTQIK?',
@@ -101,7 +101,7 @@ collection = {
         'freq': 'M',
         'datemin': '1990-1-4',
         "m": "market",
-        'SubItem': ['市場成交資訊'],
+        'subtitle': ['市場成交資訊'],
         },
     "三大法人買賣金額統計表": {
         'url': r'https://www.twse.com.tw/fund/BFI82U?',
@@ -114,7 +114,7 @@ collection = {
         'freq': 'D',
         'datemin': '2004-4-7',
         "m": "market",
-        'SubItem': ['三大法人買賣金額統計表'],
+        'subtitle': ['三大法人買賣金額統計表'],
         },
     "三大法人買賣超日報": {
         'url': r'https://www.twse.com.tw/fund/T86?',
@@ -126,7 +126,7 @@ collection = {
         'freq': 'D',
         'datemin': '2012-5-2',
         "m": "market",
-        'SubItem': ["三大法人買賣超日報"],
+        'subtitle': ["三大法人買賣超日報"],
         },
     "個股日本益比、殖利率及股價淨值比": {
         'url': r'https://www.twse.com.tw/exchangeReport/BWIBBU_d?',
@@ -139,7 +139,7 @@ collection = {
         'freq': 'D',
         'datemin': '2012-5-2',
         "m": "stock",
-        'SubItem': ['個股日本益比、殖利率及股價淨值比'],
+        'subtitle': ['個股日本益比、殖利率及股價淨值比'],
         },
     "信用額度總量管制餘額表": {
         'url': r'https://www.twse.com.tw/exchangeReport/TWT93U?',

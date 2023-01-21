@@ -134,21 +134,45 @@ def productdict(source, key):
     return productdict
 
 
-def type1(df, key):
-    df = df.replace({",":""},regex=True)
+def type1(df, title, subtitle):
+    df = df.replace({",": ""}, regex=True)
     df = df.rename(columns=colname_dic)
     df = df[numericol[key]].apply(pd.to_numeric, errors='coerce')
     return df
 
 
-def cleaner(data):
-    keydf = getkeys(data)
-    productdict()
-
 
 fundic = {
-
+    '每日收盤行情': {
+        '價格指數(臺灣證券交易所)': type1,
+        '價格指數(跨市場)': '',
+        '價格指數(臺灣指數公司)': '',
+        '報酬指數(臺灣證券交易所)': '',
+        '報酬指數(跨市場)': '',
+        '報酬指數(臺灣指數公司)': '',
+        '大盤統計資訊': '',
+        '漲跌證券數合計': '',
+        '每日收盤行情': ''
+    }
 }
+
+
+def cleaner(data, title):
+    keydf = getkeys(data)
+    product = productdict(source=data, key=keydf)
+    for key, df in product.items():
+        find = findbylist(data['crawlerdic']['subtitle'], key)
+        if find:
+            if len(find) > 1:
+                print('{} is in {} at the same time.'.format(key, ','.join(find)))
+                break
+            else:
+                fun = fundic[title][find[0]]
+        else:
+            print('{} is not in crawlerdic.SubItem.'.format(key))
+            break
+
+
 
 
 if __name__ == '__main__':
@@ -156,16 +180,16 @@ if __name__ == '__main__':
     log = stocklog.findlog('source', 'log.pkl')
     files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
     filedict = pickleload(path=files['path'][0])
-    splitext(files['path'][0])
+    filename(files['path'][0])
     filedict
     filedict.keys()
     pd.to_datetime(filedict['date'])
-    filedict['crawlerdic']['SubItem']
+    filedict['crawlerdic']['subtitle']
     keydf = getkeys(filedict)
     productdict = productdict(source=filedict, key=keydf)
     import re
     for key, df in productdict.items():
-        find = findbylist(filedict['crawlerdic']['SubItem'], key)
+        find = findbylist(filedict['crawlerdic']['subtitle'], key)
         if find:
             df = type1(df, colname_dic.get(find[0], find[0]))
         else:
