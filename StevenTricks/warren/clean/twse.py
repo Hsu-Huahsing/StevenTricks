@@ -15,33 +15,8 @@ from os.path import join
 from StevenTricks.snt import findbylist
 from StevenTricks.fileop import PathWalk_df, pickleload, filename
 from StevenTricks.warren.twse import Log
-from StevenTricks.warren.conf import db_path, colname_dic, numericol
+from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol
 import datetime
-mode = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-res = re.get(stocklist['url'].format(str(1)))
-r = pd.read_html(stocklist['url'].format(str(2)), encoding='cp950')
-r = pd.DataFrame(r[0])
-a=r.reset_index(drop=True).reset_index()
-r.loc[r.duplicated(keep=False), 'product']
-r.T
-pd.DataFrame(res)
-
-
-
-
-
-
-def get_item(title):
-    return title_dic[title]
-
-
-def get_title(item):
-    return crawlerdic[item]["title"]
-
-
-def search_title(item, title):
-    res = [_ for _ in crawlerdic[item]["title"] if _ in title]
-    return res
 
 
 def addcolumns(df):
@@ -137,9 +112,13 @@ def productdict(source, key):
 def type1(df, title, subtitle):
     df = df.replace({",": ""}, regex=True)
     df = df.rename(columns=colname_dic)
-    df = df[numericol[key]].apply(pd.to_numeric, errors='coerce')
-    return df
+    df = df.drop(columns=dropcol, errors='ignore')
+    df = df[numericol[title][subtitle]].apply(pd.to_numeric, errors='coerce')
+    return {subtitle: df}
 
+
+def type2(df, title, subtitle):
+    df = type1(df, title=title, subtitle=subtitle)
 
 
 fundic = {
@@ -158,21 +137,27 @@ fundic = {
 
 
 def cleaner(data, title):
+    # data 就是直接讀取pkl檔案得到的data
+    # title就是大標，pkl檔案裡面有subtitle小標
+    # pkl的小標資料不乾淨，需要透過轉換，所以就有find
+    # 返回的資料會是dict{subtitle:df}
+    res = {}
     keydf = getkeys(data)
     product = productdict(source=data, key=keydf)
     for key, df in product.items():
         find = findbylist(data['crawlerdic']['subtitle'], key)
+        # 把小標做轉換成find
         if find:
             if len(find) > 1:
                 print('{} is in {} at the same time.'.format(key, ','.join(find)))
                 break
             else:
                 fun = fundic[title][find[0]]
+                res[find[0]] = fun(data, title, find[0])
         else:
             print('{} is not in crawlerdic.SubItem.'.format(key))
             break
-
-
+    return res
 
 
 if __name__ == '__main__':
@@ -188,12 +173,15 @@ if __name__ == '__main__':
     keydf = getkeys(filedict)
     productdict = productdict(source=filedict, key=keydf)
     import re
+    n=1
+    title = filename(files['path'][0]).split('_')[0]
     for key, df in productdict.items():
-        find = findbylist(filedict['crawlerdic']['subtitle'], key)
-        if find:
-            df = type1(df, colname_dic.get(find[0], find[0]))
-        else:
+        if n == 3:
             break
+        n+=1
+        find = findbylist(collection[title]['subtitle'], key)
+        if find:
+            df = type1(df, title, find[0])
         print(key, df)
 
 
