@@ -110,19 +110,25 @@ def productdict(source, key):
 
 
 def type1(df, title, subtitle):
-    df = df.replace({",": ""}, regex=True)
+    df = df.replace({",": "", r'\)': ''}, regex=True)
     df = df.rename(columns=colname_dic)
     df = df.drop(columns=dropcol, errors='ignore')
-    df = df[numericol[title][subtitle]].apply(pd.to_numeric, errors='coerce')
+    df.loc[:, numericol[title][subtitle]] = df[numericol[title][subtitle]].apply(pd.to_numeric, errors='coerce')
     return {subtitle: df}
 
 
 def type2(df, title, subtitle):
+    # 處理xxx(yy)的格式，可以把xxx和(yy)分開成上下兩列
+    res = []
+    for subcol in df:
+        res.append(df[subcol].str.split(r'\(', expand=True, regex=True).rename(columns={0: subcol}))
+    res = pd.concat(res, axis=1)
+    df = res.drop(1, axis=1)
+    res = res.loc[:, 1]
+    res.columns = df.columns
+    df = pd.concat([df, res], ignore_index=True).dropna()
     df = type1(df, title=title, subtitle=subtitle)
-    df = df[subtitle]
-    pd.DataFrame(df.iloc[3])
-    for subtitle1 in df['成交統計']:
-        df.loc[df['成交統計'].isin([subtitle1]), df.columns['成交統計']]
+    return df
 
 
 fundic = {
@@ -168,27 +174,8 @@ if __name__ == '__main__':
     stocklog = Log(db_path)
     log = stocklog.findlog('source', 'log.pkl')
     files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
-    filedict = pickleload(path=files['path'][0])
-    filename(files['path'][0])
-    filedict
-    filedict.keys()
-    pd.to_datetime(filedict['date'])
-    filedict['crawlerdic']['subtitle']
-    keydf = getkeys(filedict)
-    productdict = productdict(source=filedict, key=keydf)
-    import re
-    n=1
-    title = filename(files['path'][0]).split('_')[0]
-    for key, df in productdict.items():
-        if n == 4:
-            break
-        n+=1
-        find = findbylist(collection[title]['subtitle'], key)
-        if find:
-            df = type1(df, title, find[0])
-        print(key, df)
 
+    for path in files['path']:
+        title = filename(path)
+        res = cleaner(data=pickleload(path=path), title=title)
 
-
-    filedict.keys()
-    filedict['date']
