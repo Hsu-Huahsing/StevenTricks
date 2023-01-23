@@ -18,7 +18,7 @@ import sys
 import datetime
 import requests as re
 import pandas as pd
-
+import datetime
 
 def sleepteller(mode=None):
     if mode == 'long':
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
     log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
-
+    
     for _ in dailycollection['stocklist']['modelis']:
 
         df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
@@ -62,6 +62,7 @@ if __name__ == "__main__":
         # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
         df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
         # 把用不到的數列先刪掉，包括剛剛的index
+
         # df.loc[:, "date"] = datetime.now().date()
         # 增加一列日期
 

@@ -24,8 +24,11 @@ class Log:
         if periodictdf is None:
             log = periodictable(periodict)
         else:
-            latestlog = periodictable(periodict, datemin=datetime.now())
-            log = pd.concat([periodictdf, latestlog])
+            if str(datetime.today().date()) not in periodictdf.index:
+                latestlog = periodictable(periodict, datemin=periodictdf.index.max())
+                log = pd.concat([periodictdf, latestlog])
+            else:
+                log = periodictdf
         return log
 
     def savelog(self, log, logtype, kind):

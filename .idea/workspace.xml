@@ -8,6 +8,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StevenTricks/warren/clean/twse.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/clean/twse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StevenTricks/warren/conf.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/conf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/crawler/twse.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/crawler/twse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/twse.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/twse.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

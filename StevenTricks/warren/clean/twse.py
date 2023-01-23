@@ -141,21 +141,20 @@ fundic = {
         '報酬指數(臺灣指數公司)': '',
         '大盤統計資訊': type1,
         '漲跌證券數合計': type2,
-        '每日收盤行情': ''
+        '每日收盤行情': type1,
     }
+
 }
 
 
-def cleaner(data, title):
+def cleaner(product, title):
     # data 就是直接讀取pkl檔案得到的data
     # title就是大標，pkl檔案裡面有subtitle小標
     # pkl的小標資料不乾淨，需要透過轉換，所以就有find
     # 返回的資料會是dict{subtitle:df}
     res = {}
-    keydf = getkeys(data)
-    product = productdict(source=data, key=keydf)
     for key, df in product.items():
-        find = findbylist(data['crawlerdic']['subtitle'], key)
+        find = findbylist(collection[title]['subtitle'], key)
         # 把小標做轉換成find
         if find:
             if len(find) > 1:
@@ -163,7 +162,8 @@ def cleaner(data, title):
                 break
             else:
                 fun = fundic[title][find[0]]
-                res[find[0]] = fun(data, title, find[0])
+                print(find[0], title, df)
+                res.update(fun(df, title, find[0]))
         else:
             print('{} is not in crawlerdic.SubItem.'.format(key))
             break
@@ -173,9 +173,33 @@ def cleaner(data, title):
 if __name__ == '__main__':
     stocklog = Log(db_path)
     log = stocklog.findlog('source', 'log.pkl')
-    files = PathWalk_df(path=join(db_path, 'source'), fileexclude=['log'], fileinclude=['.pkl'])
+    files = PathWalk_df(path=join(db_path, 'source'), direxclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
+    files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
 
+    for ind, col in findval()
+
+    for path in files_stocklist['path']:
+
+
+
+
+    n = 1
     for path in files['path']:
-        title = filename(path)
-        res = cleaner(data=pickleload(path=path), title=title)
+        if n == 2:
+            break
+        n += 1
+        title = filename(path).split('_')[0]
+        # 拿到檔名分隔號＿的前半部當作title
+        file = pickleload(path=path)
+        # 讀取pkl檔案
+        keydf = getkeys(file)
+        # 找到所有key對應的資料
+        product = productdict(source=file, key=keydf)
+        # 把key對應的結果和product合併起來
+        res = cleaner(product=product, title=title)
+        # 清理結果要取出
+        for key, df in res.items():
+            if key in
+            key = key.replace(')', '').replace('(', '_')
+
 
