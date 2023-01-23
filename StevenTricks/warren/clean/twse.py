@@ -119,6 +119,10 @@ def type1(df, title, subtitle):
 
 def type2(df, title, subtitle):
     df = type1(df, title=title, subtitle=subtitle)
+    df = df[subtitle]
+    pd.DataFrame(df.iloc[3])
+    for subtitle1 in df['成交統計']:
+        df.loc[df['成交統計'].isin([subtitle1]), df.columns['成交統計']]
 
 
 fundic = {
@@ -126,11 +130,11 @@ fundic = {
         '價格指數(臺灣證券交易所)': type1,
         '價格指數(跨市場)': '',
         '價格指數(臺灣指數公司)': '',
-        '報酬指數(臺灣證券交易所)': '',
+        '報酬指數(臺灣證券交易所)': type1,
         '報酬指數(跨市場)': '',
         '報酬指數(臺灣指數公司)': '',
-        '大盤統計資訊': '',
-        '漲跌證券數合計': '',
+        '大盤統計資訊': type1,
+        '漲跌證券數合計': type2,
         '每日收盤行情': ''
     }
 }
@@ -176,7 +180,7 @@ if __name__ == '__main__':
     n=1
     title = filename(files['path'][0]).split('_')[0]
     for key, df in productdict.items():
-        if n == 3:
+        if n == 4:
             break
         n+=1
         find = findbylist(collection[title]['subtitle'], key)
