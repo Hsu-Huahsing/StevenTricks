@@ -2,7 +2,7 @@ import pandas as pd
 from StevenTricks.fileop import pickleload, picklesave, warehouseinit
 from StevenTricks.dfi import periodictable
 from os.path import exists, join
-from datetime import datetime
+from datetime import datetime, timedelta
 datetime.now()
 
 
@@ -25,7 +25,7 @@ class Log:
             log = periodictable(periodict)
         else:
             if str(datetime.today().date()) not in periodictdf.index:
-                latestlog = periodictable(periodict, datemin=periodictdf.index.max())
+                latestlog = periodictable(periodict, datemin=periodictdf.index.max()+timedelta(days=1))
                 log = pd.concat([periodictdf, latestlog])
             else:
                 log = periodictdf

@@ -20,6 +20,7 @@ import requests as re
 import pandas as pd
 import datetime
 
+
 def sleepteller(mode=None):
     if mode == 'long':
         time = randint(600, 660)
@@ -43,7 +44,7 @@ if __name__ == "__main__":
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
     log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
-    
+
     for _ in dailycollection['stocklist']['modelis']:
 
         df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
