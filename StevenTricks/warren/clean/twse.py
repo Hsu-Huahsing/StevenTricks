@@ -11,9 +11,10 @@ from copy import deepcopy
 import pandas as pd
 import numpy as np
 import requests as re
-from os.path import join
+from os.path import join, exists
 from StevenTricks.snt import findbylist
-from StevenTricks.fileop import PathWalk_df, pickleload, filename
+from StevenTricks.fileop import PathWalk_df, pickleload, filename, logfromfolder
+from StevenTricks.dfi import findval
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol
 import datetime
@@ -173,13 +174,20 @@ def cleaner(product, title):
 if __name__ == '__main__':
     stocklog = Log(db_path)
     log = stocklog.findlog('source', 'log.pkl')
+
+    if exists(join(db_path, 'source', 'stocklistlog.pkl')) is True:
+        log_stocklist = pickleload(path=join(db_path, 'source', 'stocklistlog.pkl'))
+    else:
+        log_stocklist = logfromfolder(join(db_path, 'source', 'stocklist'), fileinclude=['.pkl'], fileexclude=['log'], dirinclude=['stocklist'], direxclude=[], log=pd.DataFrame(), fillval='succeed')
+
     files = PathWalk_df(path=join(db_path, 'source'), direxclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
     files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
 
-    for ind, col in findval()
+    for ind, col in findval(log_stocklist, 'succeed'):
+        data = pickleload(join(db_path, 'source', 'stocklist', col, '{}_{}.pkl'.format(col, ind)))
 
     for path in files_stocklist['path']:
-
+        pass
 
 
 

@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # errorlog可以直接創一個空的df
     log = log.replace({'succeed': 'wait'})
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
-    log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], log=log, fillval='succeed')
+    log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], direxclude=['stocklist'], dirinclude=[], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
 
     for _ in dailycollection['stocklist']['modelis']:
@@ -98,6 +98,8 @@ if __name__ == "__main__":
             table = "無細項分類的商品{}".format(str(_))
             # df.loc[:, "product"] = table
             datapath = path.join(db_path, 'source', 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
+            df.columns = df.loc[0]
+            df = df.drop(0)
             picklesave(df, datapath)
             # dm.to_sql_ex(df=df, table=table, pk=pk)
             continue
@@ -115,7 +117,7 @@ if __name__ == "__main__":
                 df_sub = df[startint + 1:]
             else:
                 df_sub = df[startint + 1:endint]
-
+            df_sub.columns = df.columns
             # if startname in rename_dic:
             #     startname = rename_dic[startname]
             # df_sub.loc[:, "product"] = startname
