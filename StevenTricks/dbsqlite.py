@@ -145,6 +145,7 @@ def tosql_df(df, dbpath, table, pk=[], autotime=False, notnullkey=[], uniquekey=
     # autotime就是在table裡面增加一個欄位，那個欄位會在資料新增的時候自動新增資料寫入的時間，通常是用在log紀錄寫入的瞬間自動新增一個時間欄位，精準到秒
     # dbpath一定要指定到檔名，且包含副檔名.db
     # only for the insert df into table without any condition
+    # table 就是要自己指定database裡面的table的名稱
     # 如果要保留就是使用update(只更新有變動的部分)，如果不保留就是用replace into，這樣就會把有變動的部分放進去，其餘清空
     df = df.dropna(axis=1, how="all")
     db_info = dbchange(dbpath)

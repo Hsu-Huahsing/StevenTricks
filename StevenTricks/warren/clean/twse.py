@@ -13,10 +13,11 @@ import numpy as np
 import requests as re
 from os.path import join, exists
 from StevenTricks.snt import findbylist
-from StevenTricks.fileop import PathWalk_df, pickleload, filename, logfromfolder
+from StevenTricks.fileop import PathWalk_df, pickleload, filename, logfromfolder, picklesave
 from StevenTricks.dfi import findval
 from StevenTricks.warren.twse import Log
-from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol
+from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol, datecol
+from StevenTricks.dbsqlite import tosql_df
 import datetime
 
 
@@ -182,11 +183,34 @@ if __name__ == '__main__':
 
     files = PathWalk_df(path=join(db_path, 'source'), direxclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
     files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
-
+    # n=0
     for ind, col in findval(log_stocklist, 'succeed'):
         data = pickleload(join(db_path, 'source', 'stocklist', col, '{}_{}.pkl'.format(col, ind)))
+        if data.empty is True:
+            continue
+        data = data.rename(columns=colname_dic)
+        # if n==40:break
+        # n+=1
+        for key in ['指數代號及名稱', '有價證券代號及名稱']:
+            if key in data :
+                data.loc[:,['代號','名稱']] = data[key].str.split(r'\u3000', expand=True).rename(columns={0:'代號',1:'名稱'})
+                data = data.drop(key, axis=1)
+        colrename = colname_dic.get(col, col)
+        data.loc[:, ['type', 'date']] = colrename, ind
 
-        break
+        data.loc[:, [_ for _ in numericol['stocklist'] if _ in data]] = data[[_ for _ in numericol['stocklist'] if _ in data]].apply(pd.to_numeric, errors='coerce')
+        # 利率值是空的就代表是浮動利率
+        data.loc[:, [_ for _ in datecol['stocklist'] if _ in data]] = data[[_ for _ in datecol['stocklist'] if _ in data]].apply(pd.to_datetime, errors='coerce')
+        # 到期日，日期是空的就代表無到期日
+
+        # if "ISINCode" not in data:
+        #     break
+
+        tosql_df(df=data, dbpath=join(db_path, 'cleaned', 'stocklist.db'), table=colrename, pk=["ISINCode"])
+        log_stocklist.loc[ind,col] = 'cleaned'
+        picklesave(data=log_stocklist, path=join(db_path, 'source', 'stocklistlog.pkl'))
+
+
     for path in files_stocklist['path']:
         pass
 

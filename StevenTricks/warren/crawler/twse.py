@@ -44,9 +44,8 @@ if __name__ == "__main__":
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
     log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], direxclude=['stocklist'], dirinclude=[], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
-    n=0
+    # n=0
     for _ in dailycollection['stocklist']['modelis']:
-
         df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
         sleepteller()
         df = pd.DataFrame(df[0])
@@ -61,19 +60,16 @@ if __name__ == "__main__":
             # 代表什麼都沒返回
             print("stocktable No:{} ___empty crawled result".format(str(_)))
             continue
-
-        df = df.reset_index(drop=True).reset_index()
-        # 先弄出一列是連續數字出來
-        tablename = [list(set(_)) for _ in df.values if len(set(_)) == 2]
-        # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
-        df = df.drop(["index"], errors="ignore", axis=1)
-        # 把index先刪掉
         df.columns = df.loc[0]
         # 指定第一列為column
         df = df.drop(0)
         # 避免跟column重複，所以先刪掉
-        df = df.drop(["Unnamed: 6"], errors="ignore", axis=1)
-        # 把用不到的數列先刪掉，欄位清理
+        df = df.reset_index(drop=True).reset_index()
+        # 先弄出一列是連續數字出來
+        tablename = [list(set(_)) for _ in df.values if len(set(_)) == 2]
+        # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
+        df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
+        # 把index先刪掉也把用不到的數列先刪掉，欄位清理
 
         # df.loc[:, "date"] = datetime.now().date()
         # 增加一列日期
