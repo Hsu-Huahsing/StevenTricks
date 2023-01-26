@@ -7,7 +7,7 @@ Created on Fri May 22 23:22:32 2020
 """
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
-from StevenTricks.fileop import logfromfolder, picklesave
+from StevenTricks.fileop import logfromfolder, picklesave, pickleload
 from StevenTricks.warren.conf import collection, db_path, dailycollection
 from StevenTricks.warren.twse import Log
 from os import path, remove, makedirs
@@ -44,14 +44,19 @@ if __name__ == "__main__":
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
     log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], direxclude=['stocklist'], dirinclude=[], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
-
+    n=0
     for _ in dailycollection['stocklist']['modelis']:
 
         df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
         sleepteller()
         df = pd.DataFrame(df[0])
         # read_html是返回list，所以要取出0
-
+        # if n==3:
+        #     break
+        # else:
+        #     n+=1
+        #     continue
+        # break
         if df.empty is True:
             # 代表什麼都沒返回
             print("stocktable No:{} ___empty crawled result".format(str(_)))
@@ -61,8 +66,14 @@ if __name__ == "__main__":
         # 先弄出一列是連續數字出來
         tablename = [list(set(_)) for _ in df.values if len(set(_)) == 2]
         # 要找出一整列都是重複的，當作table name，因為剛剛已經用reset_index用出一整數列了，得出的重複值會長這樣[3,重複值]，所以如果是我們要找的重複值，最少會有兩個值，一個是數列，一個是重複值
-        df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
-        # 把用不到的數列先刪掉，包括剛剛的index
+        df = df.drop(["index"], errors="ignore", axis=1)
+        # 把index先刪掉
+        df.columns = df.loc[0]
+        # 指定第一列為column
+        df = df.drop(0)
+        # 避免跟column重複，所以先刪掉
+        df = df.drop(["Unnamed: 6"], errors="ignore", axis=1)
+        # 把用不到的數列先刪掉，欄位清理
 
         # df.loc[:, "date"] = datetime.now().date()
         # 增加一列日期
@@ -98,11 +109,11 @@ if __name__ == "__main__":
             table = "無細項分類的商品{}".format(str(_))
             # df.loc[:, "product"] = table
             datapath = path.join(db_path, 'source', 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
-            df.columns = df.loc[0]
-            df = df.drop(0)
+
             picklesave(df, datapath)
             # dm.to_sql_ex(df=df, table=table, pk=pk)
             continue
+            # a=pickleload(datapath)
         # 利用同一個row的重複值來判斷商品項目名稱，同時判斷儲存的方式
         # 對於有產品細項名稱的商品開始做以下特殊處理
         for nameindex in name_index:
@@ -117,13 +128,13 @@ if __name__ == "__main__":
                 df_sub = df[startint + 1:]
             else:
                 df_sub = df[startint + 1:endint]
-            df_sub.columns = df.columns
             # if startname in rename_dic:
             #     startname = rename_dic[startname]
             # df_sub.loc[:, "product"] = startname
             datapath = path.join(db_path, 'source', 'stocklist', startname, datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
             # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
+            # a=pickleload(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source/stocklist/受益證券-資產基礎證券/受益證券-資產基礎證券_2023-01-26.pkl')
 
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]

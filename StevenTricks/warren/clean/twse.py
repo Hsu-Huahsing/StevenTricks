@@ -186,6 +186,7 @@ if __name__ == '__main__':
     for ind, col in findval(log_stocklist, 'succeed'):
         data = pickleload(join(db_path, 'source', 'stocklist', col, '{}_{}.pkl'.format(col, ind)))
 
+        break
     for path in files_stocklist['path']:
         pass
 
