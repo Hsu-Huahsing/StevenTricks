@@ -17,7 +17,7 @@ from StevenTricks.fileop import PathWalk_df, pickleload, filename, logfromfolder
 from StevenTricks.dfi import findval
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol, datecol
-from StevenTricks.dbsqlite import tosql_df
+from StevenTricks.dbsqlite import tosql_df, readsql_iter
 import datetime
 
 
@@ -174,30 +174,45 @@ def cleaner(product, title):
 
 if __name__ == '__main__':
     stocklog = Log(db_path)
+    # 初始化
     log = stocklog.findlog('source', 'log.pkl')
-
-    if exists(join(db_path, 'source', 'stocklistlog.pkl')) is True:
-        log_stocklist = pickleload(path=join(db_path, 'source', 'stocklistlog.pkl'))
+    # 讀取log
+    log_stocklist_path = join(db_path, 'source', 'stocklistlog.pkl')
+    # 設定log_stocklist的路徑
+    if exists(log_stocklist_path) is True:
+        log_stocklist = pickleload(path=log_stocklist_path)
     else:
         log_stocklist = logfromfolder(join(db_path, 'source', 'stocklist'), fileinclude=['.pkl'], fileexclude=['log'], dirinclude=['stocklist'], direxclude=[], log=pd.DataFrame(), fillval='succeed')
-
+    # 讀取stocklist的log
     files = PathWalk_df(path=join(db_path, 'source'), direxclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
+    # 一般檔案的path
     files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
-    # n=0
+    # stocklist的檔案path
     for ind, col in findval(log_stocklist, 'succeed'):
+        # 用succeed當條件
         data = pickleload(join(db_path, 'source', 'stocklist', col, '{}_{}.pkl'.format(col, ind)))
+        # 讀取檔案當作data
         if data.empty is True:
+            # 有些下載下來本身就是空值，要做特殊處理，直接跳過，但是要做log紀錄
+            log_stocklist.loc[ind, col] = 'cleaned'
+            picklesave(data=log_stocklist, path=log_stocklist_path)
             continue
         data = data.rename(columns=colname_dic)
+        # 開始欄位rename
         # if n==40:break
         # n+=1
         for key in ['指數代號及名稱', '有價證券代號及名稱']:
+            # 名稱欄位要把代號和名稱拆開成兩欄
             if key in data :
                 data.loc[:,['代號','名稱']] = data[key].str.split(r'\u3000', expand=True).rename(columns={0:'代號',1:'名稱'})
+                # \u3000是全形的空白鍵，就算前面不加r也能判斷成功，但怕以後會不能用｜去做多重判斷，所以先放r
                 data = data.drop(key, axis=1)
+                # 最後要drop本來的key
+        # 以上之後可以考慮做成function
         colrename = colname_dic.get(col, col)
+        # 欄位的rename
         data.loc[:, ['type', 'date']] = colrename, ind
-
+        # 新增兩個欄位
         data.loc[:, [_ for _ in numericol['stocklist'] if _ in data]] = data[[_ for _ in numericol['stocklist'] if _ in data]].apply(pd.to_numeric, errors='coerce')
         # 利率值是空的就代表是浮動利率
         data.loc[:, [_ for _ in datecol['stocklist'] if _ in data]] = data[[_ for _ in datecol['stocklist'] if _ in data]].apply(pd.to_datetime, errors='coerce')
@@ -207,9 +222,14 @@ if __name__ == '__main__':
         #     break
 
         tosql_df(df=data, dbpath=join(db_path, 'cleaned', 'stocklist.db'), table=colrename, pk=["ISINCode"])
+        # 放進db，用最簡單的模式，直覺型放入，沒有用adapter
         log_stocklist.loc[ind,col] = 'cleaned'
-        picklesave(data=log_stocklist, path=join(db_path, 'source', 'stocklistlog.pkl'))
+        # 成功放進db之後就要改成cleaned
+        picklesave(data=log_stocklist, path=log_stocklist_path)
+        # 儲存log
 
+    stocklist = readsql_iter(dbpath=log_stocklist_path, )
+    # 讀取stocklist，以利下面可以merge
 
     for path in files_stocklist['path']:
         pass
