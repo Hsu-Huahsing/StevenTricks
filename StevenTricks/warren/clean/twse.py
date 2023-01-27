@@ -82,8 +82,8 @@ def type3(df, title, subtitle):
     for subcol in df:
         # 原本的col name因為從0又重新賦值成subcol，所以原本的col不變，但是新分出來的col，全部都命名成unit，預設應該只會有一個欄位被命名成unit
         res.append(df[subcol].str.split(r'\(', expand=True, regex=True).rename(columns={0: subcol, 1: 'unit'}))
-    # 從res把剛剛分出來的重新組回來
-    df = pd.concat(res, axis=1, ignore_index=True).dropna()
+    # 從res把剛剛分出來的重新組回來，concat如果加ignore_index，那就會連column name 都變成連續數字，所以不能加
+    df = pd.concat(res, axis=1).dropna()
     # 剛剛沒被清到的右括弧重新清理
     df = df.replace({r'\)': ''}, regex=True)
     df = type1(df, title=title, subtitle=subtitle)
@@ -92,11 +92,12 @@ def type3(df, title, subtitle):
 
 def type4(df, title, subtitle):
     df = type1(df, title=title, subtitle=subtitle)
+    df = df[subtitle]
     df.columns = ",".join(df.columns).replace("買進", "融券買進").replace("融券買進", "融資買進", 1).split(",")
     df.columns = ",".join(df.columns).replace("賣出", "融券賣出").replace("融券賣出", "融資賣出", 1).split(",")
     df.columns = ",".join(df.columns).replace("今日餘額", "今日融券餘額").replace("今日融券餘額", "今日融資餘額", 1).split(",")
     df.columns = ",".join(df.columns).replace("限額", "融券限額").replace("融券限額", "融資限額", 1).split(",")
-    return df
+    return {subtitle: df}
 
 
 fundic = {
@@ -211,7 +212,7 @@ if __name__ == '__main__':
     # for ind, col in findval(log, 'succeed'):
     for ind, col in findval(log.drop('每日收盤行情', axis=1), 'succeed'):
         print(col, ind)
-        if n == 2:
+        if n == 200:
             break
         n += 1
         file = pickleload(files.loc[files['file'] == '{}_{}.pkl'.format(col, ind.date()), 'path'].values[0])

@@ -95,8 +95,8 @@ if __name__ == "__main__":
             datapath = path.join(db_path, 'source', 'stocklist', startname, datetime.datetime.today().strftime(startname + str(_) + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
 
-    # for ind, col in findval(log.drop('每日收盤行情', axis=1), 'wait'):
-    for ind, col in findval(log, 'wait'):
+    for ind, col in findval(log.drop(['每日收盤行情','信用交易統計'], axis=1), 'wait'):
+    # for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
         crawlerdic['payload']['date'] = ind.date().strftime("%Y%m%d")
         datapath = path.join(db_path, 'source', col)
