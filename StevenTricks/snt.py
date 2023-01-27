@@ -75,6 +75,7 @@ def TenPercentile_to_int(char, errors="raise", local="en_US.UTF-8"):
 
 
 def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
+    # 分解有國字年月日的情況，例如93年4月12日
     def mode2(series):
         result = series.str.split("年|月|日", expand=True).rename(columns={0: "year", 1: "month", 2: "day"})
         if '年' not in result or '月' not in result or '日' not in result:
@@ -82,13 +83,15 @@ def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
         result.loc[:, "year"] = (pd.to_numeric(result.loc[:, "year"], downcast="integer", errors='coerce') + 1911).astype(str)
         result = pd.to_datetime(result.loc[:, ["year", "month", "day"]], errors="coerce", infer_datetime_format=True)
         return result
-    
+
+    # 例如9/82，就是民國82年9月的意思，把它變成1993-8-1，日期預設是1
     def mode3(series):
         series = series.str.split("-", expand=True).rename(columns={0: "month", 1: "year"}).reindex(columns=['year', 'month'])
         series = (pd.to_numeric(series.loc[:, "year"], downcast="float", errors="coerce") + 1911).astype(str).str.split(".", expand=True)[0] + "-" + series["month"]
         series = pd.to_datetime(series, errors="coerce", infer_datetime_format=True)
         return series
-    
+
+    # 例如0820312
     if mode == 1:
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_numeric(x, downcast="float", errors="coerce").astype(str).str.rsplit(".", n=1, expand=True)[0].str.zfill(7))
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: (pd.to_numeric(x.str.slice(stop=3), errors='coerce') + 1911).fillna("").astype(str).str.rsplit(r".", expand=True)[0] + x.str.slice(start=3))
@@ -99,7 +102,11 @@ def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
     
     elif mode == 3:
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode3(series=x))
-    
+    # 例如82/4/12變成1993/4/12
+    elif mode == 4:
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: x.str.zfill(9))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: (pd.to_numeric(x.str.slice(stop=3), errors='coerce') + 1911).fillna("").astype(str).str.rsplit(r".", expand=True)[0] + x.str.slice(start=3))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_datetime(x, errors="coerce", infer_datetime_format=True))
     return df
 
 

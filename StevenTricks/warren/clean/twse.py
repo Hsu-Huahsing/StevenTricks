@@ -13,7 +13,7 @@ from StevenTricks.dfi import findval
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol, datecol
 from StevenTricks.dbsqlite import tosql_df, readsql_iter
-from StevenTricks.snt import tonumeric_int
+from StevenTricks.snt import tonumeric_int, changetype_stringtodate
 
 
 productkey = {
@@ -48,7 +48,7 @@ def productdict(source, key):
 
 
 def type1(df, title, subtitle):
-    df = df.replace({",": ""}, regex=True)
+    df = df.replace({",": "", r'\)': '', r'\(': '_'}, regex=True)
     df = df.rename(columns=colname_dic)
     df = df.drop(columns=dropcol, errors='ignore')
     df.loc[:, numericol[title][subtitle]] = df[numericol[title][subtitle]].apply(pd.to_numeric, errors='coerce')
@@ -71,7 +71,7 @@ def type2(df, title, subtitle):
     res.columns = df.columns
     # 在用concat上下組合起來
     df = pd.concat([df, res], ignore_index=True).dropna()
-    df = df.replace({r'\)': ''}, regex=True)
+    # df = df.replace({r'\)': ''}, regex=True)
     df = type1(df, title=title, subtitle=subtitle)
     return df
 
@@ -85,7 +85,7 @@ def type3(df, title, subtitle):
     # 從res把剛剛分出來的重新組回來，concat如果加ignore_index，那就會連column name 都變成連續數字，所以不能加
     df = pd.concat(res, axis=1).dropna()
     # 剛剛沒被清到的右括弧重新清理
-    df = df.replace({r'\)': ''}, regex=True)
+    # df = df.replace({r'\)': ''}, regex=True)
     df = type1(df, title=title, subtitle=subtitle)
     return df
 
@@ -97,6 +97,13 @@ def type4(df, title, subtitle):
     df.columns = ",".join(df.columns).replace("賣出", "融券賣出").replace("融券賣出", "融資賣出", 1).split(",")
     df.columns = ",".join(df.columns).replace("今日餘額", "今日融券餘額").replace("今日融券餘額", "今日融資餘額", 1).split(",")
     df.columns = ",".join(df.columns).replace("限額", "融券限額").replace("融券限額", "融資限額", 1).split(",")
+    return {subtitle: df}
+
+
+def type5(df, title, subtitle):
+    df = type1(df, title=title, subtitle=subtitle)
+    df = df[subtitle]
+    df = changetype_stringtodate(df=df, datecol=['date'], mode=4)
     return {subtitle: df}
 
 
@@ -116,6 +123,12 @@ fundic = {
         "融資融券彙總": type4,
         "信用交易統計": type3,
     },
+    '市場成交資訊': {
+        '市場成交資訊': type5
+    },
+    '三大法人買賣金額統計表': {
+        '三大法人買賣金額統計表': type1
+    }
 }
 
 
@@ -210,9 +223,9 @@ if __name__ == '__main__':
     # 讀取stocklist，以利下面可以merge
     n = 1
     # for ind, col in findval(log, 'succeed'):
-    for ind, col in findval(log.drop('每日收盤行情', axis=1), 'succeed'):
+    for ind, col in findval(log.drop(['每日收盤行情', '市場成交資訊', '信用交易統計'], axis=1), 'succeed'):
         print(col, ind)
-        if n == 200:
+        if n == 100:
             break
         n += 1
         file = pickleload(files.loc[files['file'] == '{}_{}.pkl'.format(col, ind.date()), 'path'].values[0])
@@ -224,18 +237,25 @@ if __name__ == '__main__':
         res = cleaner(product=product, title=col)
         # 清理結果要取出
         for key, df in res.items():
-            # merge就是優先用代號，沒有代號就用名稱
-            pk = ['名稱', 'date']
-            if key not in collection[col]['combinepk']:
+            # nomatch就是不用跟stocklist進行配對
+            if key not in collection[col]['nomatch']:
+                # merge就是優先用代號，沒有代號就用名稱
                 if '代號' in df:
                     df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('代號', axis=1)]], how='left', on=['代號'])
-                    pk = ['代號', 'date']
                 else:
                     df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('名稱', axis=1)]], how='left', on=['名稱'])
+            # 這裡決定如何用pk，優先用代號，再來是名稱，最後是空的，就是直接給他用auto_pk
+            if '代號' in df:
+                pk = ['代號', 'date']
+            elif '名稱' in df:
+                pk = ['名稱', 'date']
+            else:
+                pk = []
 
             key = colname_dic.get(key, key)
             # key的轉換主要是把括號弄掉和一些常用字的轉換
-            df.loc[:, ['date']] = ind
+            if 'date' not in df:
+                df.loc[:, ['date']] = ind
             # 全部都要新增日期，就算有merge，這裡也要把stocklist裏面的date覆蓋掉，table就是等一下放盡sqldb要用的table name
 
             tosql_df(df=df, dbpath=join(db_path, 'cleaned', '{}.db'.format(ind.year)), table=key, pk=pk)
