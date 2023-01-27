@@ -136,11 +136,11 @@ def type2(df, title, subtitle):
 fundic = {
     '每日收盤行情': {
         '價格指數(臺灣證券交易所)': type1,
-        '價格指數(跨市場)': '',
-        '價格指數(臺灣指數公司)': '',
+        '價格指數(跨市場)': type1,
+        '價格指數(臺灣指數公司)': type1,
         '報酬指數(臺灣證券交易所)': type1,
-        '報酬指數(跨市場)': '',
-        '報酬指數(臺灣指數公司)': '',
+        '報酬指數(跨市場)': type1,
+        '報酬指數(臺灣指數公司)': type1,
         '大盤統計資訊': type1,
         '漲跌證券數合計': type2,
         '每日收盤行情': type1,
@@ -163,8 +163,8 @@ def cleaner(product, title):
                 print('{} is in {} at the same time.'.format(key, ','.join(find)))
                 break
             else:
-                fun = fundic[title][find[0]]
                 print(find[0], title, df)
+                fun = fundic[title][find[0]]
                 res.update(fun(df, title, find[0]))
         else:
             print('{} is not in crawlerdic.SubItem.'.format(key))
@@ -173,6 +173,7 @@ def cleaner(product, title):
 
 
 if __name__ == '__main__':
+    a=pickleload(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source/stocklist/2/股票/股票_2023-01-27.pkl')
     stocklog = Log(db_path)
     # 初始化
     log = stocklog.findlog('source', 'log.pkl')
@@ -190,9 +191,14 @@ if __name__ == '__main__':
     # 一般檔案的path
     files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
     # stocklist的檔案path
+
+    n=0
     for ind, col in findval(log_stocklist, 'succeed'):
+        print(ind, col)
+        if n==3:break
+        n+=1
         # 用succeed當條件
-        data = pickleload(join(db_path, 'source', 'stocklist', col, '{}_{}.pkl'.format(col, ind)))
+        data = pickleload(files_stocklist.loc[files_stocklist['file'] == '{}_{}.pkl'.format(col, ind), 'path'].values[0])
         # 讀取檔案當作data
         if data.empty is True:
             # 有些下載下來本身就是空值，要做特殊處理，直接跳過，但是要做log紀錄
@@ -201,8 +207,6 @@ if __name__ == '__main__':
             continue
         data = data.rename(columns=colname_dic)
         # 開始欄位rename
-        # if n==40:break
-        # n+=1
         for key in ['指數代號及名稱', '有價證券代號及名稱']:
             # 名稱欄位要把代號和名稱拆開成兩欄
             if key in data :
@@ -219,10 +223,6 @@ if __name__ == '__main__':
         # 利率值是空的就代表是浮動利率
         data.loc[:, [_ for _ in datecol['stocklist'] if _ in data]] = data[[_ for _ in datecol['stocklist'] if _ in data]].apply(pd.to_datetime, errors='coerce')
         # 到期日，日期是空的就代表無到期日
-
-        # if "ISINCode" not in data:
-        #     break
-
         tosql_df(df=data, dbpath=join(db_path, 'cleaned', 'stocklist.db'), table=colrename, pk=["ISINCode"])
         # 放進db，用最簡單的模式，直覺型放入，沒有用adapter
         log_stocklist.loc[ind,col] = 'cleaned'
@@ -233,18 +233,14 @@ if __name__ == '__main__':
     stocklist = pd.concat(readsql_iter(dbpath=join(db_path, 'cleaned', 'stocklist.db')))
     # 讀取stocklist，以利下面可以merge
 
-    for path in files_stocklist['path']:
-        pass
-
-
 
     n = 1
     for path in files['path']:
         if n == 2:
             break
         n += 1
-        title = filename(path).split('_')[0]
-        # 拿到檔名分隔號＿的前半部當作title
+        title, date = filename(path).split('_')[0], filename(path).split('_')[1]
+        # 拿到檔名分隔號＿的前半部當作title、後半部當作date
         file = pickleload(path=path)
         # 讀取pkl檔案
         keydf = getkeys(file)
@@ -254,7 +250,13 @@ if __name__ == '__main__':
         res = cleaner(product=product, title=title)
         # 清理結果要取出
         for key, df in res.items():
-            if key in
-            key = key.replace(')', '').replace('(', '_')
+            df.loc[:, 'date'] = date
+            # 全部都要新增日期
+# a=df.loc[df['代號']=='2303']
+            if key in collection[title]['stock']:
+                df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('代號', axis=1)]], how='left', on=['代號'])
+                break
+            else:
+                key = key.replace(')', '').replace('(', '_')
 
 

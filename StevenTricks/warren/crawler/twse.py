@@ -44,18 +44,11 @@ if __name__ == "__main__":
     # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
     log = logfromfolder(path.join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], direxclude=['stocklist'], dirinclude=[], log=log, fillval='succeed')
     # 比對資料夾內的資料，依照現有存在的資料去比對比較準確，有可能上次抓完，中間有動到資料
-    # n=0
     for _ in dailycollection['stocklist']['modelis']:
         df = pd.read_html(dailycollection['stocklist']['url'].format(str(_)), encoding='cp950')
         sleepteller()
         df = pd.DataFrame(df[0])
         # read_html是返回list，所以要取出0
-        # if n==3:
-        #     break
-        # else:
-        #     n+=1
-        #     continue
-        # break
         if df.empty is True:
             # 代表什麼都沒返回
             print("stocktable No:{} ___empty crawled result".format(str(_)))
@@ -71,28 +64,6 @@ if __name__ == "__main__":
         df = df.drop(["index", "Unnamed: 6"], errors="ignore", axis=1)
         # 把index先刪掉也把用不到的數列先刪掉，欄位清理
 
-        # df.loc[:, "date"] = datetime.now().date()
-        # 增加一列日期
-
-        # 以下對特殊欄位進行特殊處理
-        # if "指數代號及名稱" in df:
-        #     df.loc[:, ["代號", "名稱"]] = df.loc[:, "指數代號及名稱"].str.split(" |　", expand=True, n=1).rename(
-        #         columns={0: "代號", 1: "名稱"})
-        # elif "有價證券代號及名稱" in df:
-        #     df.loc[:, ["代號", "名稱"]] = df.loc[:, "有價證券代號及名稱"].str.split(" |　", expand=True, n=1).rename(
-        #         columns={0: "代號", 1: "名稱"})
-
-        # df = df.rename(columns=colname_dic)
-        # 把處理好的欄位重新命名
-
-        # if pk not in df:
-        #     print("no primary key")
-        #     print(_)
-        #     print(pk)
-        #     print(df.columns)
-        #     continue
-        # 以上檢查是否有變更primary key欄位的狀況
-
         # tablename
         if len(tablename) > 1:
             # 如果有兩種以上產品名的情況
@@ -103,13 +74,10 @@ if __name__ == "__main__":
         else:
             # 沒有產品名，就單獨一個dataframe，那就不用特別處理直接儲存就好
             table = "無細項分類的商品{}".format(str(_))
-            # df.loc[:, "product"] = table
             datapath = path.join(db_path, 'source', 'stocklist', table, datetime.datetime.today().strftime(table+'_%Y-%m-%d.pkl'))
 
             picklesave(df, datapath)
-            # dm.to_sql_ex(df=df, table=table, pk=pk)
             continue
-            # a=pickleload(datapath)
         # 利用同一個row的重複值來判斷商品項目名稱，同時判斷儲存的方式
         # 對於有產品細項名稱的商品開始做以下特殊處理
         for nameindex in name_index:
@@ -124,13 +92,9 @@ if __name__ == "__main__":
                 df_sub = df[startint + 1:]
             else:
                 df_sub = df[startint + 1:endint]
-            # if startname in rename_dic:
-            #     startname = rename_dic[startname]
-            # df_sub.loc[:, "product"] = startname
-            datapath = path.join(db_path, 'source', 'stocklist', startname, datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
+
+            datapath = path.join(db_path, 'source', 'stocklist', startname+str(_), datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
-            # dm.to_sql_ex(df=df_sub, table=startname, pk=pk)
-            # a=pickleload(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source/stocklist/受益證券-資產基礎證券/受益證券-資產基礎證券_2023-01-26.pkl')
 
     for ind, col in findval(log, 'wait'):
         crawlerdic = collection[col]
