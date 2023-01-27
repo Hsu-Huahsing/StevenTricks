@@ -125,6 +125,4 @@ def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, f
         else:
             # 值不存在的話就直接新增
             log.loc[ind, col] = fillval
-
-        print(log.loc[ind, col])
     return log

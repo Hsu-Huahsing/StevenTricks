@@ -167,7 +167,7 @@ def cleaner(product, title):
                 print('{} is in {} at the same time.'.format(key, ','.join(find)))
                 break
             else:
-                print(find[0], title, df)
+                # print(find[0], title, df)
                 fun = fundic[title][find[0]]
                 res.update(fun(df, title, find[0]))
         else:
@@ -182,8 +182,11 @@ if __name__ == '__main__':
     # 初始化
     log = stocklog.findlog('source', 'log.pkl')
     # 讀取log
+    log = logfromfolder(join(db_path, 'source'), fileinclude=['.pkl'], fileexclude=['log'], direxclude=['stocklist'], dirinclude=[], log=log, fillval='succeed', avoid=[])
+    # 整理log，如果要把db刪掉重新進行資料清理，就要把avoid重新設置成空的[]，不然他會跳過cleaned，要重新進行資料清理就要把他設置成succeed
     log_stocklist_path = join(db_path, 'source', 'stocklistlog.pkl')
     # 設定log_stocklist的路徑
+    # 整理stocklist的log
     if exists(log_stocklist_path) is True:
         log_stocklist = pickleload(path=log_stocklist_path)
         log_stocklist = logfromfolder(join(db_path, 'source', 'stocklist'), fileinclude=['.pkl'], fileexclude=['log'],
@@ -214,7 +217,7 @@ if __name__ == '__main__':
         for key in ['指數代號及名稱', '有價證券代號及名稱']:
             # 名稱欄位要把代號和名稱拆開成兩欄
             if key in data :
-                data.loc[:,['代號','名稱']] = data[key].str.split(r'\u3000', expand=True).rename(columns={0:'代號',1:'名稱'})
+                data.loc[:, ['代號', '名稱']] = data[key].str.split(r'\u3000', expand=True).rename(columns={0: '代號', 1: '名稱'})
                 # \u3000是全形的空白鍵，就算前面不加r也能判斷成功，但怕以後會不能用｜去做多重判斷，所以先放r
                 data = data.drop(key, axis=1)
                 # 最後要drop本來的key
@@ -237,44 +240,43 @@ if __name__ == '__main__':
         picklesave(data=log_stocklist, path=log_stocklist_path)
         # 儲存log
 
+
+
+
     stocklist = pd.concat(readsql_iter(dbpath=join(db_path, 'cleaned', 'stocklist.db')))
     # 讀取stocklist，以利下面可以merge
-
-
-    n = 1
-    for path in files['path']:
-        if n == 2:
-            break
-        n += 1
-        title, date = filename(path).split('_')[0], filename(path).split('_')[1]
-        # 拿到檔名分隔號＿的前半部當作title、後半部當作date
-        file = pickleload(path=path)
+    # n = 1
+    for ind, col in findval(log, 'succeed'):
+        print(col, ind)
+        # if n == 2:
+        #     break
+        # n += 1
+        file = pickleload(files.loc[files['file'] == '{}_{}.pkl'.format(col, ind.date()), 'path'].values[0])
         # 讀取pkl檔案
         keydf = getkeys(file)
         # 找到所有key對應的資料
         product = productdict(source=file, key=keydf)
         # 把key對應的結果和product合併起來
-        res = cleaner(product=product, title=title)
+        res = cleaner(product=product, title=col)
         # 清理結果要取出
         for key, df in res.items():
             # merge就是優先用代號，沒有代號就用名稱
-            if key not in collection[title]['combinepk']:
+            pk = ['名稱', 'date']
+            if key not in collection[col]['combinepk']:
                 if '代號' in df:
                     df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('代號', axis=1)]], how='left', on=['代號'])
-                    pk = ['代號']
+                    pk = ['代號', 'date']
                 else:
                     df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('名稱', axis=1)]], how='left', on=['名稱'])
-                    pk = ['名稱']
-            else:
-                pk = ['名稱', 'date']
 
             key = colname_dic.get(key, key)
             # key的轉換主要是把括號弄掉和一些常用字的轉換
-            df.loc[:, ['date', 'table']] = date, key
+            df.loc[:, ['date']] = ind
             # 全部都要新增日期，就算有merge，這裡也要把stocklist裏面的date覆蓋掉，table就是等一下放盡sqldb要用的table name
 
-            tosql_df(df=df, dbpath=join(db_path, 'cleaned', '{}.db'.format(date.split('-')[0])), table=key, pk=pk)
+            tosql_df(df=df, dbpath=join(db_path, 'cleaned', '{}.db'.format(ind.year)), table=key, pk=pk)
 
-
+        log.loc[ind, col] = 'cleaned'
+        picklesave(log, join(db_path, 'source', 'log.pkl'))
 
 
