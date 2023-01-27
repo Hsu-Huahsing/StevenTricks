@@ -37,6 +37,11 @@ colname_dic = {
     "證券名稱": "名稱",
     "股票名稱": "名稱",
     "有價證券名稱": "名稱",
+    '報酬指數': "名稱",
+    '指數': "名稱",
+    '成交統計': "名稱",
+    '類型': "名稱",
+
 }
 
 title_dic = {
@@ -92,7 +97,8 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2004-2-11',
-        "stock": ["每日收盤行情"],
+        # combinepk 就是需要把名稱跟date結合起來，當作復合型的pk，用這個方式來判斷需不需要跟stocklist做merge，因為通常要可以跟stocklist做merge的都有名稱或代號可以直接當pk用，不用做到跟date結合
+        "combinepk": ["大盤統計資訊", "漲跌證券數合計"],
         'subtitle': ["價格指數(臺灣證券交易所)", "價格指數(跨市場)", "價格指數(臺灣指數公司)", "報酬指數(臺灣證券交易所)", "報酬指數(跨市場)",
                      "報酬指數(臺灣指數公司)", "大盤統計資訊", "漲跌證券數合計", "每日收盤行情"],
     },
@@ -105,7 +111,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2001-1-1',
-        "stock": [],
+        "combinepk": [],
         'subtitle': ["融資融券彙總", "信用交易統計"],
         },
     "市場成交資訊": {
@@ -117,7 +123,7 @@ collection = {
             },
         'freq': 'M',
         'datemin': '1990-1-4',
-        "stock": [],
+        "combinepk": [],
         'subtitle': ['市場成交資訊'],
         },
     "三大法人買賣金額統計表": {
@@ -130,7 +136,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2004-4-7',
-        "stock": [],
+        "combinepk": [],
         'subtitle': ['三大法人買賣金額統計表'],
         },
     "三大法人買賣超日報": {
@@ -142,7 +148,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2012-5-2',
-        "stock": [],
+        "combinepk": [],
         'subtitle': ["三大法人買賣超日報"],
         },
     "個股日本益比、殖利率及股價淨值比": {
@@ -155,7 +161,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2012-5-2',
-        "stock": ['個股日本益比、殖利率及股價淨值比'],
+        "combinepk": ['個股日本益比、殖利率及股價淨值比'],
         'subtitle': ['個股日本益比、殖利率及股價淨值比'],
         },
     "信用額度總量管制餘額表": {
@@ -167,7 +173,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2005-7-1',
-        "stock": ['信用額度總量管制餘額表'],
+        "combinepk": ['信用額度總量管制餘額表'],
         },
     "當日沖銷交易標的及成交量值": {
         'url': r'https://www.twse.com.tw/exchangeReport/TWTB4U?',
@@ -179,7 +185,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2014-1-6',
-        "stock": ['當日沖銷交易標的及成交量值'],
+        "combinepk": ['當日沖銷交易標的及成交量值'],
         },
     # 這裡的,'當日沖銷交易統計'跟market有重複，因為都是大盤的沖銷交易===========
     "每月當日沖銷交易標的及統計": {
@@ -192,7 +198,7 @@ collection = {
             },
         'freq': 'M',
         'datemin': '2014-1-6',
-        "stock": [],
+        "combinepk": [],
         },
     "外資及陸資投資持股統計": {
         'url': 'https://www.twse.com.tw/fund/MI_QFIIS?',
@@ -204,7 +210,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '2004-2-11',
-        "stock": ['外資及陸資投資持股統計'],
+        "combinepk": ['外資及陸資投資持股統計'],
         },
     "發行量加權股價指數歷史資料": {
         'url': 'https://www.twse.com.tw/indicesReport/MI_5MINS_HIST?',
@@ -215,7 +221,7 @@ collection = {
             },
         'freq': 'D',
         'datemin': '1999-1-5',
-        "stock": [],
+        "combinepk": [],
         },
     }
 

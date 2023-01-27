@@ -35,14 +35,15 @@ def tonumeric_int(char):
     try:
         res = float(char)
     except:
-        return char
-    
+        return None
+    # 因為float可以返回的種類最多，如果連float都無法返回那一定不是數值類型，就返回None
+    # 下面以返回res為主，通常不是返回int，最少也會返回float
     try:
-        if res == int( char ) : 
-            return int( char )
-        else :
+        if res == int(char):
+            return int(char)
+        else:
             return res
-    except :
+    except:
         return res
 
 

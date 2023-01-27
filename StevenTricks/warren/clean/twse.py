@@ -14,10 +14,11 @@ import requests as re
 from os.path import join, exists
 from StevenTricks.snt import findbylist
 from StevenTricks.fileop import PathWalk_df, pickleload, filename, logfromfolder, picklesave
-from StevenTricks.dfi import findval
+from StevenTricks.dfi import findval, dfrows_iter
 from StevenTricks.warren.twse import Log
 from StevenTricks.warren.conf import db_path, colname_dic, numericol, collection, dropcol, datecol
 from StevenTricks.dbsqlite import tosql_df, readsql_iter
+from StevenTricks.snt import tonumeric_int
 import datetime
 
 
@@ -112,7 +113,7 @@ def productdict(source, key):
 
 
 def type1(df, title, subtitle):
-    df = df.replace({",": "", r'\)': ''}, regex=True)
+    df = df.replace({",": ""}, regex=True)
     df = df.rename(columns=colname_dic)
     df = df.drop(columns=dropcol, errors='ignore')
     df.loc[:, numericol[title][subtitle]] = df[numericol[title][subtitle]].apply(pd.to_numeric, errors='coerce')
@@ -129,6 +130,7 @@ def type2(df, title, subtitle):
     res = res.loc[:, 1]
     res.columns = df.columns
     df = pd.concat([df, res], ignore_index=True).dropna()
+    df = df.replace({r'\)': ''}, regex=True)
     df = type1(df, title=title, subtitle=subtitle)
     return df
 
@@ -145,8 +147,10 @@ fundic = {
         '漲跌證券數合計': type2,
         '每日收盤行情': type1,
     }
-
 }
+
+
+
 
 
 def cleaner(product, title):
@@ -173,7 +177,7 @@ def cleaner(product, title):
 
 
 if __name__ == '__main__':
-    a=pickleload(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source/stocklist/2/股票/股票_2023-01-27.pkl')
+    # a=pickleload(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source/stocklist/2/股票/股票_2023-01-27.pkl')
     stocklog = Log(db_path)
     # 初始化
     log = stocklog.findlog('source', 'log.pkl')
@@ -192,11 +196,11 @@ if __name__ == '__main__':
     files_stocklist = PathWalk_df(path=join(db_path, 'source'), dirinclude=['stocklist'], fileexclude=['log'], fileinclude=['.pkl'])
     # stocklist的檔案path
 
-    n=0
+    # n=0
     for ind, col in findval(log_stocklist, 'succeed'):
-        print(ind, col)
-        if n==3:break
-        n+=1
+        # print(ind, col)
+        # if n==3:break
+        # n+=1
         # 用succeed當條件
         data = pickleload(files_stocklist.loc[files_stocklist['file'] == '{}_{}.pkl'.format(col, ind), 'path'].values[0])
         # 讀取檔案當作data
@@ -215,6 +219,9 @@ if __name__ == '__main__':
                 data = data.drop(key, axis=1)
                 # 最後要drop本來的key
         # 以上之後可以考慮做成function
+        if tonumeric_int(col[-1]) is not None:
+            col = col[:-1]
+        #     把尾數的數字篩選掉
         colrename = colname_dic.get(col, col)
         # 欄位的rename
         data.loc[:, ['type', 'date']] = colrename, ind
@@ -250,13 +257,24 @@ if __name__ == '__main__':
         res = cleaner(product=product, title=title)
         # 清理結果要取出
         for key, df in res.items():
-            df.loc[:, 'date'] = date
-            # 全部都要新增日期
-# a=df.loc[df['代號']=='2303']
-            if key in collection[title]['stock']:
-                df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('代號', axis=1)]], how='left', on=['代號'])
-                break
+            # merge就是優先用代號，沒有代號就用名稱
+            if key not in collection[title]['combinepk']:
+                if '代號' in df:
+                    df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('代號', axis=1)]], how='left', on=['代號'])
+                    pk = ['代號']
+                else:
+                    df = df.merge(stocklist.loc[:, [_ for _ in stocklist if _ not in df.drop('名稱', axis=1)]], how='left', on=['名稱'])
+                    pk = ['名稱']
             else:
-                key = key.replace(')', '').replace('(', '_')
+                pk = ['名稱', 'date']
+
+            key = colname_dic.get(key, key)
+            # key的轉換主要是把括號弄掉和一些常用字的轉換
+            df.loc[:, ['date', 'table']] = date, key
+            # 全部都要新增日期，就算有merge，這裡也要把stocklist裏面的date覆蓋掉，table就是等一下放盡sqldb要用的table name
+
+            tosql_df(df=df, dbpath=join(db_path, 'cleaned', '{}.db'.format(date.split('-')[0])), table=key, pk=pk)
+
+
 
 

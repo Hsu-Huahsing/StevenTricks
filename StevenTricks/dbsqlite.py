@@ -97,6 +97,7 @@ def addcols_df(df, table):
 
 
 def addtable_df(df, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], fktable="", fk=[]):
+    # 如果沒有指定pk就會自動用auto_pk，就是直接給一連串的連續數值
     df = df.dropna(axis=1, how="all")
     dtype_series = dtypes_df(df)
     dtype_series = replace_series(dtype_series, sqltype_dict, True, "fuzz")

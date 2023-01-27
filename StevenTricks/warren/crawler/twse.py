@@ -93,7 +93,7 @@ if __name__ == "__main__":
             else:
                 df_sub = df[startint + 1:endint]
 
-            datapath = path.join(db_path, 'source', 'stocklist', startname+str(_), datetime.datetime.today().strftime(startname + '_%Y-%m-%d.pkl'))
+            datapath = path.join(db_path, 'source', 'stocklist', startname, datetime.datetime.today().strftime(startname + str(_) + '_%Y-%m-%d.pkl'))
             picklesave(df_sub, datapath)
 
     for ind, col in findval(log, 'wait'):
