@@ -59,14 +59,43 @@ def type2(df, title, subtitle):
     # 處理xxx(yy)的格式，可以把xxx和(yy)分開成上下兩列
     res = []
     for subcol in df:
+        # 原本的col name因為從0又重新賦值成subcol，所以原本的col不變，但是新分出來的col，全部都命名成1，並且全部放到res
         res.append(df[subcol].str.split(r'\(', expand=True, regex=True).rename(columns={0: subcol}))
+    # 從res把剛剛分出來的重新組回來，就會變成只要是剛剛從括弧分出來的欄位名稱都會是1
     res = pd.concat(res, axis=1)
+    # 只要把欄位名稱是1的全部丟掉，就又會回到原本的df
     df = res.drop(1, axis=1)
+    # 把欄位名稱是1的全部選出來就會是純新的表格
     res = res.loc[:, 1]
+    # 在把原本的column全部放到新的表格
     res.columns = df.columns
+    # 在用concat上下組合起來
     df = pd.concat([df, res], ignore_index=True).dropna()
     df = df.replace({r'\)': ''}, regex=True)
     df = type1(df, title=title, subtitle=subtitle)
+    return df
+
+
+def type3(df, title, subtitle):
+    # 有交易單位的另外新增一個叫做'單位'的欄位
+    res = []
+    for subcol in df:
+        # 原本的col name因為從0又重新賦值成subcol，所以原本的col不變，但是新分出來的col，全部都命名成unit，預設應該只會有一個欄位被命名成unit
+        res.append(df[subcol].str.split(r'\(', expand=True, regex=True).rename(columns={0: subcol, 1: 'unit'}))
+    # 從res把剛剛分出來的重新組回來
+    df = pd.concat(res, axis=1, ignore_index=True).dropna()
+    # 剛剛沒被清到的右括弧重新清理
+    df = df.replace({r'\)': ''}, regex=True)
+    df = type1(df, title=title, subtitle=subtitle)
+    return df
+
+
+def type4(df, title, subtitle):
+    df = type1(df, title=title, subtitle=subtitle)
+    df.columns = ",".join(df.columns).replace("買進", "融券買進").replace("融券買進", "融資買進", 1).split(",")
+    df.columns = ",".join(df.columns).replace("賣出", "融券賣出").replace("融券賣出", "融資賣出", 1).split(",")
+    df.columns = ",".join(df.columns).replace("今日餘額", "今日融券餘額").replace("今日融券餘額", "今日融資餘額", 1).split(",")
+    df.columns = ",".join(df.columns).replace("限額", "融券限額").replace("融券限額", "融資限額", 1).split(",")
     return df
 
 
@@ -81,7 +110,11 @@ fundic = {
         '大盤統計資訊': type1,
         '漲跌證券數合計': type2,
         '每日收盤行情': type1,
-    }
+    },
+    '信用交易統計': {
+        "融資融券彙總": type4,
+        "信用交易統計": type3,
+    },
 }
 
 
@@ -174,12 +207,13 @@ if __name__ == '__main__':
 
     stocklist = pd.concat(readsql_iter(dbpath=join(db_path, 'cleaned', 'stocklist.db')))
     # 讀取stocklist，以利下面可以merge
-    # n = 1
-    for ind, col in findval(log, 'succeed'):
+    n = 1
+    # for ind, col in findval(log, 'succeed'):
+    for ind, col in findval(log.drop('每日收盤行情', axis=1), 'succeed'):
         print(col, ind)
-        # if n == 2:
-        #     break
-        # n += 1
+        if n == 2:
+            break
+        n += 1
         file = pickleload(files.loc[files['file'] == '{}_{}.pkl'.format(col, ind.date()), 'path'].values[0])
         # 讀取pkl檔案
         keydf = getkeys(file)
