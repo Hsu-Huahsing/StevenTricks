@@ -192,6 +192,7 @@ def tosqladapter_df(df, dbpath, table, adaptertable, adapter_col, pk=[], adapter
 
 def readsql_iter(dbpath, db_list=[], table_list=[], table_exclude=[], adapter=True, db_col=False, table_col=False, ind_col=None, chunksize=None):
     # dbpath可以是資料夾也可以是檔名，檔名一定要包含副檔名.db
+    # table_list 就是只找某幾個table
     # db_list一定要是 "檔名.db"
     db_info = dbchange(dbpath)
     if isdir(dbpath) is True:

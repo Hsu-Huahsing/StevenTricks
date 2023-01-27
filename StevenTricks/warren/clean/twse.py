@@ -181,6 +181,8 @@ if __name__ == '__main__':
     # 設定log_stocklist的路徑
     if exists(log_stocklist_path) is True:
         log_stocklist = pickleload(path=log_stocklist_path)
+        log_stocklist = logfromfolder(join(db_path, 'source', 'stocklist'), fileinclude=['.pkl'], fileexclude=['log'],
+                                      dirinclude=['stocklist'], direxclude=[], log=log_stocklist, fillval='succeed', avoid=['cleaned'])
     else:
         log_stocklist = logfromfolder(join(db_path, 'source', 'stocklist'), fileinclude=['.pkl'], fileexclude=['log'], dirinclude=['stocklist'], direxclude=[], log=pd.DataFrame(), fillval='succeed')
     # 讀取stocklist的log
@@ -228,7 +230,7 @@ if __name__ == '__main__':
         picklesave(data=log_stocklist, path=log_stocklist_path)
         # 儲存log
 
-    stocklist = readsql_iter(dbpath=log_stocklist_path, )
+    stocklist = pd.concat(readsql_iter(dbpath=join(db_path, 'cleaned', 'stocklist.db')))
     # 讀取stocklist，以利下面可以merge
 
     for path in files_stocklist['path']:
