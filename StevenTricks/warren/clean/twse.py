@@ -107,6 +107,26 @@ def type5(df, title, subtitle):
     return {subtitle: df}
 
 
+def type6(df, title, subtitle):
+    df = type1(df, title=title, subtitle=subtitle)
+    df = df[subtitle]
+    df.columns = ",".join(df.columns).replace("前日餘額", "借券前日餘額").replace("借券前日餘額", "融券前日餘額", 1).split(",")
+    return {subtitle: df}
+
+
+def type7(df, title, subtitle):
+    df.columns = ",".join(df.columns).replace(r"</br>", "").split(",")
+    df = type1(df, title=title, subtitle=subtitle)
+    return df
+
+
+def type8(df, title, subtitle):
+    df = type1(df, title=title, subtitle=subtitle)
+    df = df[subtitle]
+    df = changetype_stringtodate(df=df, datecol=['最近一次上市公司申報外資持股異動日期'], mode=4)
+    return {subtitle: df}
+
+
 fundic = {
     '每日收盤行情': {
         '價格指數(臺灣證券交易所)': type1,
@@ -128,7 +148,29 @@ fundic = {
     },
     '三大法人買賣金額統計表': {
         '三大法人買賣金額統計表': type1
-    }
+    },
+    '三大法人買賣超日報': {
+        '三大法人買賣超日報': type1
+    },
+    '個股日本益比、殖利率及股價淨值比': {
+        '個股日本益比、殖利率及股價淨值比': type1
+    },
+    '信用額度總量管制餘額表': {
+        '信用額度總量管制餘額表': type6
+    },
+    '當日沖銷交易標的及成交量值': {
+        '當日沖銷交易統計資訊': type7,
+        '當日沖銷交易標的及成交量值': type7,
+    },
+    "每月當日沖銷交易標的及統計": {
+        "每月當日沖銷交易標的及統計": type5,
+    },
+    '外資及陸資投資持股統計': {
+        '外資及陸資投資持股統計': type8,
+    },
+    '發行量加權股價指數歷史資料': {
+        '發行量加權股價指數歷史資料': type5
+    },
 }
 
 
@@ -221,13 +263,13 @@ if __name__ == '__main__':
 
     stocklist = pd.concat(readsql_iter(dbpath=join(db_path, 'cleaned', 'stocklist.db')))
     # 讀取stocklist，以利下面可以merge
-    n = 1
-    # for ind, col in findval(log, 'succeed'):
-    for ind, col in findval(log.drop(['每日收盤行情', '市場成交資訊', '信用交易統計'], axis=1), 'succeed'):
+    # n = 1
+    for ind, col in findval(log, 'succeed'):
+    # for ind, col in findval(log.drop(['每日收盤行情', '市場成交資訊', '信用交易統計', '三大法人買賣超日報', '三大法人買賣金額統計表', '個股日本益比、殖利率及股價淨值比', '當日沖銷交易標的及成交量值','信用額度總量管制餘額表',"每月當日沖銷交易標的及統計", '外資及陸資投資持股統計'], axis=1), 'succeed'):
         print(col, ind)
-        if n == 100:
-            break
-        n += 1
+        # if n == 10:
+        #     break
+        # n += 1
         file = pickleload(files.loc[files['file'] == '{}_{}.pkl'.format(col, ind.date()), 'path'].values[0])
         # 讀取pkl檔案
         keydf = getkeys(file)
