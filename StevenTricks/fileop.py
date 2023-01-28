@@ -14,10 +14,6 @@ import pickle
 
 def filename(path):
     return basename(splitext(path)[0])
-# def getdir(path):
-#     if isfile(path) is True:
-#         path = abspath(dirname(path))
-#     return path
 
 
 def picklesave(data, path):
