@@ -1,9 +1,10 @@
 from setuptools import find_packages, setup
-from os import environ
+# 因為windows的environ參數有可能和mac不一樣，所以用environ就會造成windows出錯，因此盡量不用
+# from os import environ
 
 setup(
     name='StevenTricks',  # 应用名
-    author=environ['USER'],
+    author='Steven',
     license='BSD',
     version='0.0.4',  # 版本号
     packages=find_packages(),  # 包括在安装包内的Python包

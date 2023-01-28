@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.0.4-py3-none-any.whl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.0.4.tar.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
