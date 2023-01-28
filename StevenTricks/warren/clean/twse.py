@@ -117,6 +117,7 @@ def type6(df, title, subtitle):
 def type7(df, title, subtitle):
     df.columns = ",".join(df.columns).replace(r"</br>", "").split(",")
     df = type1(df, title=title, subtitle=subtitle)
+    # 因為最後返回的結果是用type1的，所以直接返回df
     return df
 
 
