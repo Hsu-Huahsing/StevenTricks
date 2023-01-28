@@ -97,6 +97,7 @@ def addcols_df(df, table):
 
 
 def addtable_df(df, table, pk=[], autotime=False, notnullkey=[], uniquekey=[], fktable="", fk=[]):
+    # 如果沒有指定pk就會自動用auto_pk，就是直接給一連串的連續數值
     df = df.dropna(axis=1, how="all")
     dtype_series = dtypes_df(df)
     dtype_series = replace_series(dtype_series, sqltype_dict, True, "fuzz")
@@ -145,6 +146,7 @@ def tosql_df(df, dbpath, table, pk=[], autotime=False, notnullkey=[], uniquekey=
     # autotime就是在table裡面增加一個欄位，那個欄位會在資料新增的時候自動新增資料寫入的時間，通常是用在log紀錄寫入的瞬間自動新增一個時間欄位，精準到秒
     # dbpath一定要指定到檔名，且包含副檔名.db
     # only for the insert df into table without any condition
+    # table 就是要自己指定database裡面的table的名稱
     # 如果要保留就是使用update(只更新有變動的部分)，如果不保留就是用replace into，這樣就會把有變動的部分放進去，其餘清空
     df = df.dropna(axis=1, how="all")
     db_info = dbchange(dbpath)
@@ -191,6 +193,7 @@ def tosqladapter_df(df, dbpath, table, adaptertable, adapter_col, pk=[], adapter
 
 def readsql_iter(dbpath, db_list=[], table_list=[], table_exclude=[], adapter=True, db_col=False, table_col=False, ind_col=None, chunksize=None):
     # dbpath可以是資料夾也可以是檔名，檔名一定要包含副檔名.db
+    # table_list 就是只找某幾個table
     # db_list一定要是 "檔名.db"
     db_info = dbchange(dbpath)
     if isdir(dbpath) is True:

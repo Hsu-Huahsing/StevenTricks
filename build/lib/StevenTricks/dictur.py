@@ -2,7 +2,17 @@ from random import randint
 import re
 
 
+def indexkey(dic, index):
+    n = 0
+    for key in dic:
+        if n == index:
+            return dic[key]
+        n += 1
+    print('index <{}> is out of index. the dic size is {}'.format(str(index), str(n)))
+
+
 def findstr(dic, text):
+    # text可以用|分隔，來達到多條件搜尋，搜尋結果有可能是兩個以上，就會用list返回，如果找不到就返回空的list
     res = []
     for key in dic:
         if re.search(text, key):
@@ -34,3 +44,17 @@ def stack(dic):
             res[value] = []
         res[value].append(key)
     return res
+
+
+def renamekey(dic, replacedic={}, error='coerce'):
+    # replacedic = { oldkey : newkey}
+    # error 可以是 coerce就是沒有這個key就給一個None，ignore意思就是沒有這個key就什麼都不做
+    for key in replacedic:
+        if replacedic[key] not in dic:
+            if error == 'coerce':
+                dic[replacedic[key]] = None
+            elif error == 'ignore':
+                pass
+            continue
+        dic[key] = dic.pop(replacedic[key])
+    return dic

@@ -1,15 +1,50 @@
 # -*- coding: utf-8 -*-
 
 from StevenTricks.snt import dtypes_df
-
+import numpy as np
 import pandas as pd
 import re
 from itertools import product
-from datetime import date
+from datetime import date, datetime
 from os.path import join, split
 from os import makedirs, walk
 
+# pd.date_range(start='2022-12-30', periods=1, freq='M')[0]
+# datetime.now().date()
 
+
+def findval(df, val):
+    for col in df:
+        series = df.loc[df[col].isin([val]), col]
+        res = zip(series.index, series.size*[col])
+        for ind, col1 in res:
+            yield ind, col1
+
+
+def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now().date(), freq="", defaultval=None):
+    # 這是用來產生時間當作index的一串series
+    # seriesname,pendix就是這個series的name和前綴詞，如果需要放註記避免重複可以用pendix
+    # mindate、maxdate可以用來指定特定區間，maxdate預設是當天，freq是指這段區間的頻率，可以是Ｄ、Ｗ、Ｍ、Ｑ、Ｙ
+    # defaultstr是這個series產生的時候內部預設的文字，因為如果跟其他series結合，沒有值的話python本身就是預設None，所以如果要用作判斷是結合後為空直，還是本身就是空直，盡量default不要是none
+    d = pd.date_range(start=datemin, end=datemax, freq=freq)
+    d = d.append(pd.DatetimeIndex([datemax]))
+    # 因為d的屬性是pandas.core.indexes.datetimes.DatetimeIndex，實質上是index，所以要用index內建的function，pd.concat只能用在df和series
+    d = d.unique()
+    return pd.Series(np.repeat(defaultval, d.size), index=d, name=pendix + seriesname)
+
+
+def periodictable(perioddict, datemin=None):
+    # 傳入的格式為{name:{'datemin':'yyyy-m-d','freq':'D' or 'M'}}，可多個name同時傳入
+    df = []
+    for key in perioddict:
+        if datemin is not None:
+            perioddict[key]['datemin'] = datemin
+        df.append(dateseries(seriesname=key, datemin=perioddict[key]['datemin'], freq=perioddict[key]['freq'], defaultval='wait'))
+    df = pd.concat(df, axis=1)
+    return df
+
+
+# dateseries(seriesname='ssss',mindate='2010-1-1',freq='W')
 def replace_series(series, std_dict, na=False, mode="fuzz"):
     # series依照std_dict給定的對照表，去replace每一個值，std_dict只能是一對一的dict，取代的方式分為fuzz和exac兩個模式，exac比較快速但適用範圍較窄，fuzz適用範圍比較廣，但是比較慢，在可以預期的情況下盡量使用exac
     res = []
