@@ -5,6 +5,8 @@ Created on Fri May 22 23:22:32 2020
 
 @author: mac
 """
+import json.decoder
+
 from StevenTricks.dfi import findval
 from StevenTricks.netGEN import randomheader
 from StevenTricks.fileop import logfromfolder, picklesave, pickleload
@@ -104,7 +106,9 @@ if __name__ == "__main__":
         makedirs(datapath, exist_ok=True)
 
         try:
-            res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=(3,7))
+            res = re.post(url=crawlerdic['url'], headers=next(randomheader()), data=crawlerdic['payload'], timeout=(3, 7))
+            # 有時候會出現回應ok，回應是200的狀況，但是json()會出現error，這樣也是當作錯誤，這是因為網路被反爬蟲的關係
+            data = res.json()
             print('sleep ...')
             sleepteller()
         except KeyboardInterrupt:
@@ -113,7 +117,6 @@ if __name__ == "__main__":
             stocklog.savelog(log, logtype='source', kind='errorlog.pkl')
             print("Log saved .")
             sys.exit()
-
         except Exception as e:
             print("Unknowned error")
             print("===============")
@@ -134,8 +137,7 @@ if __name__ == "__main__":
             continue
 
         if res.status_code == re.codes.ok:
-            # 只要result的結果是正確，就只剩下是友資料還是當天休市的差別
-            data = res.json()
+            # 只要result的結果是正確，且json()又不出錯，大概就一定有正確資料，就只剩下是有資料還是當天休市的差別
             print(data['stat'])
             print('------------------')
             if data['stat'] == 'OK':
@@ -157,8 +159,8 @@ if __name__ == "__main__":
             stocklog.savelog(log, logtype='source', kind='log.pkl')
             stocklog.savelog(log, logtype='source', kind='errorlog.pkl')
             sleepteller(mode='long')
-            continue
-
+            # continue
+            exit(0)
         data['crawlerdic'] = crawlerdic
         data['request'] = res
         picklesave(data=data, path=path.join(datapath, col+'_'+str(ind.date()))+'.pkl')
