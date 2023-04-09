@@ -5,17 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/StevenTricks/dfi.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/dfi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/twse/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/NLPtools/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/twse/hunting.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/hunting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/NLP_S.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/NLPtools/NLP_S.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools/chdict.txt" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/NLPtools/chdict.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools/chstopwords.txt" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/NLPtools/chstopwords.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/algorithm.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/algorithm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/configuration.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/vitruvius/logicop.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/hunting.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/hunting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
