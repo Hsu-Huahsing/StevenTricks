@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="" />
+    <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/StevenTricks/twse/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/twse/hunting.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks/vitruvius/configuration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -37,8 +42,8 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/PythonProject/StevenTricks/warren/clean",
-    "settings.editor.selected.configurable": "pyconsole"
+    "last_opened_file_path": "/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/PythonProject/StevenTricks/twse",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
@@ -52,11 +57,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/StevenTricks/twse" />
       <recent name="$PROJECT_DIR$/StevenTricks/warren/clean" />
       <recent name="$PROJECT_DIR$/StevenTricks/warren/warehouse" />
       <recent name="$PROJECT_DIR$/StevenTricks/warren/net" />
       <recent name="$PROJECT_DIR$/StevenTricks/warren/conf" />
-      <recent name="$PROJECT_DIR$/StevenTricks/vitruvius/NLPtools" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/StevenTricks/warren" />
