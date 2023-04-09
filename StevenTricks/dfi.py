@@ -76,6 +76,10 @@ def unique_series(series, mode=""):
     return series.unique()
 
 
+def cutoutliers_series(series, bottom=0.05, up=0.95):
+    return series[(series >= series.quantile(bottom)) & (series <= series.quantile(up))]
+
+
 def dfrows_iter(df, colname_list, std_dict={}, nodropcol_list=[]):
     # 根據傳入的幾個col，把他們全部用笛卡爾積相連
     res_list = []

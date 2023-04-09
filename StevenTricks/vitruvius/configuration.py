@@ -1,3 +1,0 @@
-database = {
-    'twse': r''
-}
