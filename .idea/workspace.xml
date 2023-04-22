@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/hunting.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/warren/vitruvius/twse/hunting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +40,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/PythonProject/StevenTricks/twse",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.new.ui"
+    "settings.editor.selected.configurable": "preferences.keymap"
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
