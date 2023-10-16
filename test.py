@@ -2,6 +2,9 @@
 
 from selenium.webdriver.common.by import By
 from selenium import webdriver
+driver = webdriver.Chrome(r"/Users/stevenhsu/Desktop/chromedriver_mac_arm64/chromedriver")
+
+
 
 
 
