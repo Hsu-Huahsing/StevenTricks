@@ -2,13 +2,15 @@
 
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-driver = webdriver.Chrome(r"/Users/stevenhsu/Desktop/chromedriver_mac_arm64/chromedriver")
+# driver = webdriver.Chrome(r"/Users/stevenhsu/Desktop/chromedriver_mac_arm64/chromedriver")
+driver = webdriver.Chrome()
+driver.get('https://www.leju.com.tw/list_search_result')
 
+import requests
 
-
-
-
-
+res = requests.get(r"http://47.254.131.164/warehouse/Inventory.aspx")
+res.status_code
+res.text
 
 import unittest
 
