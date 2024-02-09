@@ -29,7 +29,7 @@ def isinstance_dfiter(df):
     except:
         return False
     
-    
+
 def tonumeric_int(char):
     # 用來判斷是否為數字，盡量返回整數，如果不是浮點數也不是整數就返回原來的字符
     try:
@@ -76,38 +76,54 @@ def TenPercentile_to_int(char, errors="raise", local="en_US.UTF-8"):
 
 def changetype_stringtodate(df=pd.DataFrame(), datecol=[], mode=1):
     # 分解有國字年月日的情況，例如93年4月12日
-    def mode2(series):
+    def mode1(series):
         result = series.str.split("年|月|日", expand=True).rename(columns={0: "year", 1: "month", 2: "day"})
         if '年' not in result or '月' not in result or '日' not in result:
             return series
         result.loc[:, "year"] = (pd.to_numeric(result.loc[:, "year"], downcast="integer", errors='coerce') + 1911).astype(str)
-        result = pd.to_datetime(result.loc[:, ["year", "month", "day"]], errors="coerce", infer_datetime_format=True)
+        result = pd.to_datetime(result.loc[:, ["year", "month", "day"]], errors="coerce")
         return result
 
     # 例如9/82，就是民國82年9月的意思，把它變成1993-8-1，日期預設是1
-    def mode3(series):
+    def mode2(series):
         series = series.str.split("-", expand=True).rename(columns={0: "month", 1: "year"}).reindex(columns=['year', 'month'])
         series = (pd.to_numeric(series.loc[:, "year"], downcast="float", errors="coerce") + 1911).astype(str).str.split(".", expand=True)[0] + "-" + series["month"]
-        series = pd.to_datetime(series, errors="coerce", infer_datetime_format=True)
+        series = pd.to_datetime(series, errors="coerce")
         return series
 
-    # 例如0820312
     if mode == 1:
-        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_numeric(x, downcast="float", errors="coerce").astype(str).str.rsplit(".", n=1, expand=True)[0].str.zfill(7))
-        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: (pd.to_numeric(x.str.slice(stop=3), errors='coerce') + 1911).fillna("").astype(str).str.rsplit(r".", expand=True)[0] + x.str.slice(start=3))
-        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_datetime(x, errors="coerce", infer_datetime_format=True))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode1(series=x))
     
     elif mode == 2:
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode2(series=x))
-    
-    elif mode == 3:
-        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: mode3(series=x))
     # 例如82/4/12變成1993/4/12
-    elif mode == 4:
+    elif mode == 3:
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: x.str.zfill(9))
         df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: (pd.to_numeric(x.str.slice(stop=3), errors='coerce') + 1911).fillna("").astype(str).str.rsplit(r".", expand=True)[0] + x.str.slice(start=3))
-        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_datetime(x, errors="coerce", infer_datetime_format=True))
+        df.loc[:, datecol] = df.loc[:, datecol].apply(lambda x: pd.to_datetime(x, errors="coerce"))
     return df
+
+def strtodate(x):
+    # 0820412轉成1993/04/12
+    if pd.isna(x) is True:
+        return
+
+    if 7>=len(x) >= 6:
+        x = x.zfill(7)
+    else:
+        return
+
+    d = x[-2:]
+    m = x[-4:-2]
+    y = str(int(x[:-4])+1911)
+
+    res = pd.to_datetime("-".join([y,m,d]), errors="coerce")
+
+    if pd.isna(res) is True:
+        return
+    else:
+        return res.strftime("%Y/%m/%d")
+
 
 
 def ChineseStr_bool( char ) :
