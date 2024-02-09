@@ -153,6 +153,10 @@ def DfRenew(left=pd.DataFrame(), right=pd.DataFrame()):
     left = pd.concat([left, right.loc[:, newcol]], axis=1)
     return left
 
+def series_replace(toreplace = "", res = "" , df = pd.DataFrame()):
+    temp = df[[toreplace, res]].values
+    df[res] = pd.Series([_[1].replace(_[0],'') for _ in temp ])
+    return df
 
 if __name__ == '__main__':
     pass

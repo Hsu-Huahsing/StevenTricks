@@ -9,29 +9,16 @@ df = pd.read_excel(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDo
 
 df1 = df.loc[df[['交易年月日', '建築完成年月']].isnull(), :]
 
-def strtodate(x):
-    # 0820412轉成1993-04-12
-    if pd.isna(x) is True:
-        return
 
-    if 7>=len(x) >= 6:
-        x = x.zfill(7)
-    else:
-        return
 
-    d = x[-2:]
-    m = x[-4:-2]
-    y = str(int(x[:-4])+1911)
 
-    res = pd.to_datetime("-".join([y,m,d]), errors="coerce")
+aa = df[['鄉鎮市區','土地位置建物門牌']]
+a = df[['鄉鎮市區','土地位置建物門牌']].values
+aa['土地位置建物門牌'] = pd.Series([_[1].replace(_[0],'') for _ in a ])
 
-    if pd.isna(res) is True:
-        return
-    else:
-        return res.strftime("%Y/%m/%d")
 
-d = df[['交易年月日','建築完成年月']]
-c = df[['交易年月日','建築完成年月']].map(lambda x: strtodate(x))
+
+
 
 d.isna().sum()
 c.isna().sum()
