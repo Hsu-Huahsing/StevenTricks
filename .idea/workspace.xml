@@ -5,72 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ce3abd-d102-4d88-967b-49c363346321" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/StevenTricks/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/dependency_links.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks.egg-info/top_level.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/StevenTricks/dfi.py" beforeDir="false" afterPath="$PROJECT_DIR$/StevenTricks/dfi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/dbsqlite.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/dfi.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/dictur.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/fileop.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/net.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/netGEN.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/AP_examin.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/FC.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/FC_parse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GH.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/QGIS.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/countymap/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/districtmap/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/qgis/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/GIS/villagemap/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/Ubee.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/__main__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/analysis.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/clean.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/conf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/packet.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/realestate/roadname_insert.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/snt.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/tracker.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/NLP_S.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/NLPtools/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/algorithm.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/vitruvius/logicop.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/CPL.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/__main__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/analysis.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/clean/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/clean/twse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/conf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/conf/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/conf/twse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawl.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawler/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawler/model/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawler/model/twse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/crawler/twse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/financialreport.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/net/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/net/twseGEN.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/packet.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/title_trans.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/twse.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/lib/StevenTricks/warren/warehouse/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.0.3-py3-none-any.whl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.0.3.tar.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.0.4-py3-none-any.whl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/StevenTricks-0.0.4.tar.gz" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/PKG-INFO" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/SOURCES.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/dependency_links.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/StevenTricks.egg-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/StevenTricks-0.0.5.tar.gz" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
