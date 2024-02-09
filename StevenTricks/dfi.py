@@ -155,8 +155,7 @@ def DfRenew(left=pd.DataFrame(), right=pd.DataFrame()):
 
 def replacebyseries(toreplace = "", res = "" , df = pd.DataFrame()):
     temp = df[[toreplace, res]].values
-    df[res] = pd.Series([_[1].replace(_[0],'') for _ in temp ])
-    return df
+    return pd.Series([_[1].replace(_[0],'') for _ in temp ])
 
 if __name__ == '__main__':
     pass
