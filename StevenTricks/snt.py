@@ -107,23 +107,28 @@ def strtodate(x):
     # 0820412轉成1993/04/12
     if pd.isna(x) is True:
         return
-
-    if 7>=len(x) >= 6:
-        x = x.zfill(7)
+    x = str(x).split(".")[0]
+    x = x.replace(" ","")
+    if 7>= len(x) >= 6:
+        x = str(x).zfill(7)
     else:
         return
-
+    
     d = x[-2:]
     m = x[-4:-2]
     y = str(int(x[:-4])+1911)
-
+    
+    if d == "00":
+        d = "01"
+    if m == "00":
+        m = "01"
+    
     res = pd.to_datetime("-".join([y,m,d]), errors="coerce")
 
     if pd.isna(res) is True:
-        return
+        return 
     else:
         return res.strftime("%Y/%m/%d")
-
 
 
 def ChineseStr_bool( char ) :
