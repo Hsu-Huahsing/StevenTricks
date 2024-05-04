@@ -108,7 +108,7 @@ def strtodate(x):
     if pd.isna(x) is True:
         return
     x = str(x).split(".")[0]
-    x = x.replace(" ","")
+    x = x.replace(" ", "").replace('-', '')
     if 7>= len(x) >= 6:
         x = str(x).zfill(7)
     else:
