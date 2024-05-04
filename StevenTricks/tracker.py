@@ -1,6 +1,9 @@
-from os.path import exists, isfile, basename, dirname, isdir, splitext
+from StevenTricks.fileop import pickleload, picklesave, warehouseinit
+from StevenTricks.dfi import periodictable
+
+from os.path import exists, isfile, basename, dirname, isdir, splitext, join
 from os import stat
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import pandas as pd
 
 
@@ -52,6 +55,42 @@ def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'),  period=None, ind
         period = str(data_dt.year)
     return pd.concat([pd.Series({"write_dt": write_dt, "data_dt": data_dt, "period": period, "index": index}, dtype='object'),
                       log], axis=1).dropna(how="any", axis=1)
+
+
+class Log:
+    def __init__(self, warehousepath=''):
+        self.warehousepath = warehousepath
+        warehouseinit(self.warehousepath)
+
+    def findlog(self, logtype, kind, periodict=None):
+        # logtype could be 'source' 'cleaned' ''
+        # kind could be 'log.pkl' 'errorlog.pkl'
+        # print(join(self.warehousepath, logtype, kind))
+        # 找到或是重新創建一個新的log，periodict可以用來建立預設的時間點表格
+        if exists(join(self.warehousepath, logtype, kind)) is True:
+            print('The old log exists')
+            log = pickleload(join(self.warehousepath, logtype, kind))
+
+            if str(datetime.today().date()) not in log.index and periodict is not None:
+                print("{} not in log index, updating the log table".format(str(datetime.today().date())))
+                latestlog = periodictable(periodict, datemin=log.index.max()+timedelta(days=1))
+                # 從上一次創建log的最新天數開始，所以要加一天，然後開始創建新的table
+                log = pd.concat([log, latestlog])
+
+        else:
+            if periodict is not None:
+                log = periodictable(periodict)
+                print("Creating the new log table")
+            else:
+                log = pd.DataFrame()
+
+        return log
+
+    def savelog(self, log, logtype, kind):
+        # logtype could be 'source'、'cleaned'，也可以什麼都不打 '' ，就代表是warehouse底下的使用紀錄
+        # kind could be 'log.pkl' 'errorlog.pkl'
+        path = join(self.warehousepath, logtype, kind)
+        picklesave(log, path)
 
 
 if __name__ == '__main__':
