@@ -58,6 +58,7 @@ def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'),  period=None, ind
 
 
 class Log:
+    # 要先執行findlog才能找到log的路徑，和相關資訊，如果只是呼叫class不會有額外的資訊
     def __init__(self, warehousepath=''):
         self.warehousepath = warehousepath
         warehouseinit(self.warehousepath)
@@ -79,22 +80,24 @@ class Log:
                 latestlog = periodictable(periodict, datemin=log.index.max()+timedelta(days=1))
                 # 從上一次創建log的最新天數開始，所以要加一天，然後開始創建新的table
                 log = pd.concat([log, latestlog])
-
         else:
-            if periodict is not None:
-                log = periodictable(periodict)
-                print("Creating the new log table")
-                picklesave(log, join(self.warehousepath, logtype, kind))
-            else:
+            if kind == 'log.pkl':
+                if periodict is not None:
+                    log = periodictable(periodict)
+                    print("Creating the new log table")
+                    picklesave(log, join(self.warehousepath, logtype, kind))
+                else:
+                    print("There is not the old log, and it need the predict to create the new log table")
+                    print("Stop the process")
+                    exit(0)
+            elif kind == 'error.pkl':
                 log = pd.DataFrame()
-                print("There is not the old log, and it need the predict to create the new log table")
-                print("Stop the process")
-                exit(0)
-                
+                picklesave(log, join(self.warehousepath, logtype, kind))
+
         if kind == 'log.pkl':
             self.log_path = join(self.warehousepath, logtype, kind)
             self.log_mtime = datetime.fromtimestamp(getmtime(self.log_path))
-        elif kind == 'errorlog.pkl':
+        elif kind == 'error.pkl':
             self.logerror_path = join(self.warehousepath, logtype, kind)
             self.logerror_mtime = datetime.fromtimestamp(getmtime(self.logerror_path))
 
