@@ -34,7 +34,7 @@ def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now().date
 
 
 def periodictable(perioddict, datemin=None):
-    # 傳入的格式為{name:{'datemin':'yyyy-m-d','freq':'D' or 'M'}}，可多個name同時傳入
+    # 傳入的格式為{name:{'datemin':'yyyy-m-d','freq':'D' or 'ME'}}，可多個name同時傳入
     df = []
     for key in perioddict:
         if datemin is not None:
