@@ -107,6 +107,10 @@ def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, f
     # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
     # 因為是從檔名分解出col和ind，所以檔名決定log的col複雜度
     pathdf = PathWalk_df(path=path, fileinclude=fileinclude, fileexclude=fileexclude, direxclude=direxclude, dirinclude=dirinclude)
+
+    log = log.replace({'succeed': 'wait'})
+    # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
+
     for name in pathdf['file']:
         col = name.split('_')[0]
         ind = name.split('_')[1].split('.')[0]
