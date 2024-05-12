@@ -7,8 +7,9 @@ Created on Tue Apr 26 15:53:48 2022
 
 import pandas as pd
 from os import makedirs, walk, remove
-from os.path import exists, pardir, abspath, isfile, samefile, join, splitext, dirname, basename
+from os.path import exists, pardir, abspath, isfile, samefile, join, splitext, dirname, basename, getmtime
 # from sys import platform
+from datetime import datetime
 import pickle
 
 
@@ -122,3 +123,9 @@ def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, f
             # 值不存在的話就直接新增
             log.loc[ind, col] = fillval
     return log
+
+
+def datatime_lastest(path=r"", fileexclude=[]):
+    file_path = PathWalk_df(path, fileexclude)['path']
+    mtime_series = file_path.apply(lambda x: datetime.fromtimestamp(getmtime(x)))
+    return max(mtime_series)

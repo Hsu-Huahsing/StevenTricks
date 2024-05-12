@@ -1,7 +1,7 @@
 from StevenTricks.fileop import pickleload, picklesave, warehouseinit
 from StevenTricks.dfi import periodictable
 
-from os.path import exists, isfile, basename, dirname, isdir, splitext, join
+from os.path import exists, isfile, basename, dirname, isdir, splitext, join, getmtime
 from os import stat
 from datetime import datetime, date, timedelta
 import pandas as pd
@@ -61,7 +61,10 @@ class Log:
     def __init__(self, warehousepath=''):
         self.warehousepath = warehousepath
         warehouseinit(self.warehousepath)
-
+        self.log_mtime = None
+        self.log_path = r""
+        self.logerror_mtime = None
+        self.logerror_path = r""
     def findlog(self, logtype, kind, periodict=None):
         # logtype could be 'source' 'cleaned' ''
         # kind could be 'log.pkl' 'errorlog.pkl'
@@ -81,8 +84,19 @@ class Log:
             if periodict is not None:
                 log = periodictable(periodict)
                 print("Creating the new log table")
+                picklesave(log, join(self.warehousepath, logtype, kind))
             else:
                 log = pd.DataFrame()
+                print("There is not the old log, and it need the predict to create the new log table")
+                print("Stop the process")
+                exit(0)
+                
+        if kind == 'log.pkl':
+            self.log_path = join(self.warehousepath, logtype, kind)
+            self.log_mtime = datetime.fromtimestamp(getmtime(self.log_path))
+        elif kind == 'errorlog.pkl':
+            self.logerror_path = join(self.warehousepath, logtype, kind)
+            self.logerror_mtime = datetime.fromtimestamp(getmtime(self.logerror_path))
 
         return log
 
