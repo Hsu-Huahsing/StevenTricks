@@ -121,22 +121,6 @@ def sweep_path(path: str) -> pd.Series:
     })
 
 
-def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, fillval, avoid=[]):
-    """Update a log DataFrame based on presence of files in directory."""
-    df = PathWalk_df(path, fileinclude=fileinclude, fileexclude=fileexclude,
-                     direxclude=direxclude, dirinclude=dirinclude)
-    log = log.replace({'succeed': 'wait'})
-    for name in df["file"]:
-        parts = name.split('_')
-        if len(parts) < 2: continue
-        col, ind = parts[0], parts[1].split('.')[0]
-        if col in log and ind in log.index:
-            if log.loc[ind, col] in avoid:
-                continue
-        log.loc[ind, col] = fillval
-    return log
-
-
 def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'), period=None, index=None):
     """Compose a logging Series with optional period granularity."""
     if period == "month":
@@ -152,3 +136,17 @@ def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'), period=None, inde
         "index": index
     }, dtype='object')
     return pd.concat([base, log], axis=1).dropna(how="any", axis=1)
+
+
+def logfromfolder(path_df, log=pd.DataFrame([]), fillval=None, avoid=[]):
+    """Update a log DataFrame based on presence of files in directory."""
+    log = log.replace({'succeed': 'wait'})
+    for name in path_df["file"]:
+        parts = name.split('_')
+        if len(parts) < 2: continue
+        col, ind = parts[0], parts[1].split('.')[0]
+        if col in log and ind in log.index:
+            if log.loc[ind, col] in avoid:
+                continue
+        log.loc[ind, col] = fillval
+    return log
