@@ -11,6 +11,7 @@ import sys
 import locale
 import pandas as pd
 
+from os import remove
 
 def findbylist(lis, text):
     # 可以給出一連串文字，放在list裏面，只要list裡面有其中一個文字是在text裡面的話，那就會返回搜尋結果，是一個list
@@ -195,3 +196,12 @@ adapter = {
         "九" : 9 ,
         }
     }
+
+
+def xlstoxlsx(path):
+    newpath = splitext(path)[0] + '.xlsx'
+    with pd.ExcelWriter(newpath) as writer:
+        for df in pd.read_html(path, header=0):
+            df.to_excel(writer, index=False)
+    remove(path)
+    return newpath

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from StevenTricks.snt import numfromright
+from StevenTricks.convert_utils import numfromright
 from StevenTricks.dfi import numinterval_series, flat_dict
 import StevenTricks.db_sqlite as db
 

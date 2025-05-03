@@ -13,7 +13,7 @@ from multiprocessing import Pool
 from sys import exc_info
 from os import path
 from StevenTricks import db_path
-from StevenTricks.fileop import PathWalk_df
+from StevenTricks.file_utils import PathWalk_df
 from pdfminer.pdfparser import PDFSyntaxError
 from StevenTricks import db_sqlite as db
 

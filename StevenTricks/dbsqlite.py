@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from StevenTricks.snt import dtypes_df
-from StevenTricks.fileop import PathWalk_df
+from StevenTricks.convert_utils import dtypes_df
+from StevenTricks.file_utils import PathWalk_df
 from StevenTricks.dfi import replace_series
 
 from os.path import join, basename, isfile, dirname, isdir, pardir, abspath

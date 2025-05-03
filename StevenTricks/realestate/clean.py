@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from StevenTricks.snt import tonumeric_int, changetype_stringtodate
+from StevenTricks.convert_utils import tonumeric_int, changetype_stringtodate
 from StevenTricks.dfi import replace_series
 from StevenTricks.dictur import flat
 from StevenTricks.realestate.packet import colname_dic, DATE_mode, ValueReplace_dict, chnum_dict, Value_dict

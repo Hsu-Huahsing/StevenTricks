@@ -1,4 +1,4 @@
-from StevenTricks.fileop import pickleload, picklesave, warehouseinit
+from StevenTricks.file_utils import pickleload, picklesave, warehouseinit
 from StevenTricks.dfi import periodictable
 
 from os.path import exists, isfile, basename, dirname, isdir, splitext, join, getmtime

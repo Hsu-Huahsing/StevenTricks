@@ -4,21 +4,23 @@ Created on Tue Apr 26 15:53:48 2022
 
 @author: 118939
 """
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 26 15:53:48 2022
+@author: 118939
+"""
 
 import pandas as pd
 from os import makedirs, walk, remove, getcwd
 from os.path import exists, pardir, abspath, isfile, samefile, join, splitext, dirname, basename, getmtime
-# from sys import platform
 from datetime import datetime
 import pickle
+from pathlib import Path
 
-
+# 顯示目前執行的時間與執行檔案的名稱
 def runninginfo():
     t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    res = {
-        "Time": t,
-        "File": "",
-    }
+    res = {"Time": t, "File": ""}
     try:
         res["File"] = __file__
     except NameError:
@@ -26,31 +28,24 @@ def runninginfo():
     print("在{}/n執行{}".format(t, res["File"]))
     return res
 
-
-def filename(path):
-    return basename(splitext(path)[0])
-
-
+# 使用 pickle 將 Python 物件儲存到指定路徑
 def picklesave(data, path):
-    # path要精確到檔名
     makedirs(abspath(dirname(path)), exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
-
+# 從 pickle 檔案載入 Python 物件
 def pickleload(path):
-    # path要精確到檔名
     with open(path, 'rb') as f:
-        data = pickle.load(f)
-        return data
+        return pickle.load(f)
 
-
+# 建立包含 'source' 和 'cleaned' 子目錄的資料夾結構
 def warehouseinit(path):
-    # 會產生兩個資料夾，source和cleaned，都放在warehouse底下
     source, cleaned = join(path, 'source'), join(path, 'cleaned')
-    makedirs(source, exist_ok=True), makedirs(cleaned, exist_ok=True)
+    makedirs(source, exist_ok=True)
+    makedirs(cleaned, exist_ok=True)
 
-
+# 將 HTML Excel 轉為 .xlsx，並刪除原檔案
 def xlstoxlsx(path):
     newpath = splitext(path)[0] + '.xlsx'
     with pd.ExcelWriter(newpath) as writer:
@@ -59,9 +54,9 @@ def xlstoxlsx(path):
     remove(path)
     return newpath
 
-
+# 避免覆蓋檔案，自動遞增檔名（_duplicatedN）
 def independentfilename(root, mark="_duplicated", count=1):
-    if exists(root) is True:
+    if exists(root):
         ext = splitext(root)[1]
         root = splitext(root)[0]
         if mark in root:
@@ -69,17 +64,14 @@ def independentfilename(root, mark="_duplicated", count=1):
             root = rootsplit.pop(0)
             if rootsplit:
                 count = int(rootsplit.pop(0)) + 1
-
         root += mark + str(count) + ext
-        if exists(root) is True:
+        if exists(root):
             root = independentfilename(root)
     return root
 
-# independentfilename(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/ActualPrice/used/a_lvr_land_a.xls')
-
-
+# 計算兩個資料夾的相對階層距離
 def pathlevel(left, right):
-    if isfile(right) is True:
+    if isfile(right):
         right = abspath(join(right, pardir))
     if len(left) > len(right):
         return
@@ -89,7 +81,7 @@ def pathlevel(left, right):
         level += 1
     return level
 
-
+# 遍歷資料夾並回傳符合條件的檔案 DataFrame
 def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=[], level=None):
     res = []
     for _path, dire, file in walk(path):
@@ -97,54 +89,58 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
             res.append([None, path])
         for f in file:
             res.append([f, join(_path, f)])
-        
     res = pd.DataFrame(res, columns=["file", "path"])
-    res.loc[:, 'level'] = res['path'].map(lambda x: pathlevel(path, x))
+    res["level"] = res["path"].map(lambda x: pathlevel(path, x))
     if level is not None:
-        res = res.loc[res['level'] <= level]
-    
-    res = res.loc[res["path"].str.contains("\\|\\".join(dirinclude), na=False)]
+        res = res.loc[res["level"] <= level]
+    res = res.loc[res["path"].str.contains("|".join(dirinclude), na=False)]
     if direxclude:
-        res = res.loc[~(res["path"].str.contains("\\|\\".join(direxclude), na=True))]
-    res = res.loc[res.loc[:, "file"].str.contains("|".join(fileinclude), na=False)]
+        res = res.loc[~res["path"].str.contains("|".join(direxclude), na=True)]
+    res = res.loc[res["file"].str.contains("|".join(fileinclude), na=False)]
     if fileexclude:
-        res = res.loc[~(res.loc[:, "file"].str.contains("|".join(fileexclude), na=True))]
+        res = res.loc[~res["file"].str.contains("|".join(fileexclude), na=True)]
     return res.reset_index(drop=True)
 
-# PathWalk_df(r'/Users/stevenhsu/Library/Mobile Documents/com~apple~CloudDocs/warehouse/stock/source', fileinclude=['.pkl'], fileexclude=['log'])
-
-
+# 根據檔名更新 log DataFrame 的指定欄位
 def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, fillval, avoid=[]):
-    # avoid 是list形式，就是如果要填寫的地方已經存在avoid裡面的值，就避開，不要覆蓋到
-    # fileinclude and fileexclude should be list
-    # 標準檔名是col_yyyy-mm-dd.pkl所以用_可以拆分出col和date
-    # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
-    # 因為是從檔名分解出col和ind，所以檔名決定log的col複雜度
-    pathdf = PathWalk_df(path=path, fileinclude=fileinclude, fileexclude=fileexclude, direxclude=direxclude, dirinclude=dirinclude)
-
+    pathdf = PathWalk_df(path, fileinclude=fileinclude, fileexclude=fileexclude,
+                         direxclude=direxclude, dirinclude=dirinclude)
     log = log.replace({'succeed': 'wait'})
-    # 在抓取之前要先把有抓過的紀錄都改為待抓'wait'
-
     for name in pathdf['file']:
         col = name.split('_')[0]
         ind = name.split('_')[1].split('.')[0]
-
         if col in log and ind in log.index:
-            # 如果值有存在的話就考慮有沒有在avoid裏面
             if log.loc[ind, col] in avoid:
-                # 在avoid裏面就直接跳過
                 continue
             else:
                 log.loc[ind, col] = fillval
-                # 不在avoid裏面就直接覆蓋
         else:
-            # 值不存在的話就直接新增
             log.loc[ind, col] = fillval
-            print("已新增{},{}".format(ind,col))
+            print("已新增{},{}".format(ind, col))
     return log
 
-
+# 傳回指定資料夾中最新的檔案修改時間
 def datatime_lastest(path=r"", fileexclude=[]):
-    file_path = PathWalk_df(path, fileexclude)['path']
+    file_path = PathWalk_df(path, fileexclude=fileexclude)['path']
     mtime_series = file_path.apply(lambda x: datetime.fromtimestamp(getmtime(x)))
     return max(mtime_series)
+
+# ✅ 回傳檔案/資料夾的屬性與時間資訊（整合 filename 功能）
+def sweep_path(path: str) -> pd.Series:
+    """
+    回傳指定檔案或資料夾路徑的基本屬性與時間資訊。
+    """
+    p = Path(path).expanduser().resolve()
+    info = {
+        'path': str(p),
+        'exists': p.exists(),
+        'is_file': p.is_file(),
+        'is_dir': p.is_dir(),
+        'name': p.name,
+        'parent': str(p.parent),
+        'suffix': p.suffix,
+        'created_time': datetime.fromtimestamp(p.stat().st_ctime) if p.exists() else None,
+        'modified_time': datetime.fromtimestamp(p.stat().st_mtime) if p.exists() else None,
+        'accessed_time': datetime.fromtimestamp(p.stat().st_atime) if p.exists() else None,
+    }
+    return pd.Series(info)

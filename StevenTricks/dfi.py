@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from StevenTricks.snt import dtypes_df
+from StevenTricks.convert_utils import dtypes_df
 import numpy as np
 import pandas as pd
 import re
