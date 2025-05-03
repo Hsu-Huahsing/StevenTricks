@@ -11,6 +11,7 @@ import pickle
 from os import makedirs, walk, remove
 from os.path import abspath, join, getmtime
 
+
 def runninginfo():
     """Print the current execution time and source file (if available)."""
     t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -21,30 +22,19 @@ def runninginfo():
     print(f"在{t}/n執行{file}")
     return {"Time": t, "File": file}
 
+
 def picklesave(data, path):
     """Save Python object to a pickle file."""
     makedirs(Path(path).parent, exist_ok=True)
     with open(path, 'wb') as f:
         pickle.dump(data, f)
 
+
 def pickleload(path):
     """Load Python object from a pickle file."""
     with open(path, 'rb') as f:
         return pickle.load(f)
 
-def warehouseinit(path):
-    """Initialize warehouse folder with 'source' and 'cleaned' subfolders."""
-    for sub in ['source', 'cleaned']:
-        makedirs(Path(path) / sub, exist_ok=True)
-
-def xlstoxlsx(path):
-    """Convert .xls (HTML) to .xlsx and delete the original file."""
-    newpath = str(Path(path).with_suffix('.xlsx'))
-    with pd.ExcelWriter(newpath) as writer:
-        for df in pd.read_html(path, header=0):
-            df.to_excel(writer, index=False)
-    remove(path)
-    return newpath
 
 def independentfilename(root, mark="_duplicated", count=1):
     """Return a non-conflicting filename by appending a counter suffix."""
@@ -60,6 +50,7 @@ def independentfilename(root, mark="_duplicated", count=1):
     newname = f"{base}{mark}{count}{ext}"
     return independentfilename(p.with_name(newname))
 
+
 def pathlevel(left, right):
     """Return how many directory levels right is below left."""
     left, right = Path(left).resolve(), Path(right).resolve()
@@ -67,6 +58,7 @@ def pathlevel(left, right):
         return len(right.relative_to(left).parts)
     except ValueError:
         return None
+
 
 def _get_path_stat(p: Path):
     """Extract file/directory timestamps or return None values."""
@@ -77,12 +69,14 @@ def _get_path_stat(p: Path):
         "accessed_time": datetime.fromtimestamp(stat.st_atime) if stat else None
     }
 
+
 def _list_files(path, file_filter=None):
     """Internal utility to list all files recursively under a path."""
     base = Path(path)
     for p in base.rglob("*"):
         if p.is_file() and (file_filter is None or file_filter(p)):
             yield p
+
 
 def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=[], level=None):
     """Return DataFrame of all files in a directory, filtered by pattern."""
@@ -111,6 +105,7 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
         df = df[~df["file"].str.contains("|".join(fileexclude), na=False)]
     return df.reset_index(drop=True)
 
+
 def sweep_path(path: str) -> pd.Series:
     """Return path metadata: existence, type, timestamps, and components."""
     p = Path(path).expanduser().resolve()
@@ -124,6 +119,7 @@ def sweep_path(path: str) -> pd.Series:
         'suffix': p.suffix,
         **_get_path_stat(p)
     })
+
 
 def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, fillval, avoid=[]):
     """Update a log DataFrame based on presence of files in directory."""
@@ -139,6 +135,7 @@ def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, f
                 continue
         log.loc[ind, col] = fillval
     return log
+
 
 def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'), period=None, index=None):
     """Compose a logging Series with optional period granularity."""
