@@ -6,11 +6,25 @@ Created on Tue Apr 26 15:53:48 2022
 """
 
 import pandas as pd
-from os import makedirs, walk, remove
+from os import makedirs, walk, remove, getcwd
 from os.path import exists, pardir, abspath, isfile, samefile, join, splitext, dirname, basename, getmtime
 # from sys import platform
 from datetime import datetime
 import pickle
+
+
+def runninginfo():
+    t = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    res = {
+        "Time": t,
+        "File": "",
+    }
+    try:
+        res["File"] = __file__
+    except NameError:
+        pass
+    print("在{}/n執行{}".format(t, res["File"]))
+    return res
 
 
 def filename(path):
@@ -102,7 +116,7 @@ def PathWalk_df(path, dirinclude=[], direxclude=[], fileexclude=[], fileinclude=
 
 def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, fillval, avoid=[]):
     # avoid 是list形式，就是如果要填寫的地方已經存在avoid裡面的值，就避開，不要覆蓋到
-    # fileinclude and fileexclude should be []
+    # fileinclude and fileexclude should be list
     # 標準檔名是col_yyyy-mm-dd.pkl所以用_可以拆分出col和date
     # fillval就是在如果找到檔案的情況下要在log填入什麼值，因為有找到檔案，所以是填入succeed
     # 因為是從檔名分解出col和ind，所以檔名決定log的col複雜度
@@ -126,6 +140,7 @@ def logfromfolder(path, fileinclude, fileexclude, direxclude, dirinclude, log, f
         else:
             # 值不存在的話就直接新增
             log.loc[ind, col] = fillval
+            print("已新增{},{}".format(ind,col))
     return log
 
 
