@@ -8,8 +8,7 @@ from pathlib import Path
 import pandas as pd
 from datetime import datetime
 import pickle
-from os import makedirs, walk, remove
-from os.path import abspath, join, getmtime
+from os import makedirs
 
 
 def runninginfo():
@@ -116,10 +115,10 @@ def sweep_path(path: str) -> pd.Series:
         'is_dir': p.is_dir(),
         'name': p.name,
         'parent': str(p.parent),
+        'parentdir': str(p.parent.name) if p.parent else None,
         'suffix': p.suffix,
         **_get_path_stat(p)
     })
-
 
 def logmaker(write_dt, data_dt, log=pd.Series(dtype='object'), period=None, index=None):
     """Compose a logging Series with optional period granularity."""
