@@ -137,22 +137,79 @@ def numinterval_series(series, std_list, label=None):
     return res
 
 
-def DfRenew(left=pd.DataFrame(), right=pd.DataFrame()):
-    if right.empty is True:
-        print(r"Empty right ... ")
-        return left
-    elif left.empty is True:
-        print(r"Empty left ... ")
-        return right
-    if left.equals(right) is True:
-        print(r"No difference ...")
-        return left
-    left.update(right, overwrite=True)
-    newcol = [i for i in right.columns if i not in left.columns]
-    dupcol = [i for i in right.columns if i in left.columns]
-    left = pd.concat([left, right.loc[~right.index.isin(left.index)], dupcol])
-    left = pd.concat([left, right.loc[:, newcol]], axis=1)
-    return left
+# 加上詳細註解的 DataFrameMerger 類別
+class DataFrameMerger:
+    def __init__(self, left: pd.DataFrame):
+        # 初始化合併器，設定初始 DataFrame，並建立更新歷程記錄清單
+        self.left = left.copy()
+        self.history = []  # 儲存每次更新的前後狀態
+
+    def renew(self, right: pd.DataFrame, overwrite: bool = True) -> pd.DataFrame:
+        # 判斷右邊資料是否為空
+        if right.empty:
+            print("Empty right ...")
+            return self.left
+        # 若左邊資料為空，直接回傳右邊資料作為新狀態
+        elif self.left.empty:
+            print("Empty left ...")
+            self.left = right.copy()
+            return self.left
+        # 若兩邊資料完全相同，無需處理
+        if self.left.equals(right):
+            print("No difference ...")
+            return self.left
+
+        # 建立左邊資料的副本作為更新基礎
+        updated = self.left.copy()
+
+        # 找出左右共同的欄位
+        shared_cols = [col for col in right.columns if col in updated.columns]
+
+        if overwrite:
+            # 若允許覆寫，直接使用 pandas 的 update 方法就地更新
+            updated.update(right[shared_cols])
+        else:
+            # 若不允許覆寫，只更新 NaN 的欄位值
+            for col in shared_cols:
+                common_index = updated.index.intersection(right.index)
+                for idx in common_index:
+                    if pd.isna(updated.at[idx, col]):
+                        updated.at[idx, col] = right.at[idx, col]
+
+        # 處理 right 中的新欄位（left 中不存在）
+        new_cols = [col for col in right.columns if col not in updated.columns]
+        for col in new_cols:
+            # 轉換型別以支援 NA（nullable）
+            col_dtype = right[col].dtype
+            if pd.api.types.is_integer_dtype(col_dtype):
+                safe_dtype = 'Int64'
+            elif pd.api.types.is_bool_dtype(col_dtype):
+                safe_dtype = 'boolean'
+            else:
+                safe_dtype = col_dtype
+
+            # 在 updated 中建立新欄位並初始化為 NA
+            updated[col] = pd.Series([pd.NA] * len(updated), index=updated.index, dtype=safe_dtype)
+
+            # 將新欄位在共有 index 中的資料從 right 填入 updated
+            common_index = right.index.intersection(updated.index)
+            updated.loc[common_index, col] = right.loc[common_index, col]
+
+        # 新增 right 中在 left 中不存在的 index 對應的列
+        new_rows = right.loc[~right.index.isin(updated.index)]
+        updated = pd.concat([updated, new_rows], axis=0)
+
+        # 儲存本次更新的歷史（包含更新前、更新使用的 right、更新後）
+        self.history.append({
+            "before": self.left.copy(),
+            "right": right.copy(),
+            "after": updated.copy()
+        })
+
+        # 更新內部狀態
+        self.left = updated
+        return updated
+
 
 
 def replacebyseries(toreplace = "", res = "" , df = pd.DataFrame()):
