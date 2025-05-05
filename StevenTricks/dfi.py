@@ -33,7 +33,7 @@ def dateseries(seriesname="", pendix="", datemin="", datemax=datetime.now().date
     return pd.Series(np.repeat(defaultval, d.size), index=d, name=pendix + seriesname)
 
 
-def periodictable(perioddict, datemin=None):
+def periodictable(perioddict={}, datemin=None):
     # 傳入的格式為{name:{'datemin':'yyyy-m-d','freq':'D' or 'ME'}}，可多個name同時傳入
     # datemin有沒有給都沒差，他會自己去抓periodict裡面的datemin來用
     df = []
