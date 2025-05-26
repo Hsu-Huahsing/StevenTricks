@@ -62,8 +62,11 @@ def renamekey(dic, replacedic={}, error='coerce'):
     return dic
 
 
-def keyinstr(str, dic, default=""):
+def keyinstr(str, dic={} , lis=[], default=""):
     for key in dic:
         if key in str:
             return dic[key]
+    for i in lis:
+        if i in str:
+            return i
     return default
