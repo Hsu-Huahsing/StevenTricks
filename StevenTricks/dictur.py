@@ -1,6 +1,8 @@
 from random import randint
 import re
 
+from StevenTricks.realestate.packet import colname_dic
+
 
 def indexkey(dic, index):
     n = 0
@@ -58,3 +60,10 @@ def renamekey(dic, replacedic={}, error='coerce'):
             continue
         dic[key] = dic.pop(replacedic[key])
     return dic
+
+
+def keyinstr(str, dic, default=""):
+    for key in dic:
+        if key in str:
+            return dic[key]
+    return default
