@@ -13,6 +13,11 @@ import pandas as pd
 
 from os import remove
 
+def safe_replace(text,old,new):
+    if isinstance(text,str):
+        text = text.replace(old,new)
+    return text
+
 def findbylist(lis, text):
     # 可以給出一連串文字，放在list裏面，只要list裡面有其中一個文字是在text裡面的話，那就會返回搜尋結果，是一個list
     # 返回的字串以lis裡面匹配的為主
