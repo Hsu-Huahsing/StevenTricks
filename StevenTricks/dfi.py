@@ -167,7 +167,13 @@ class DataFrameMerger:
 
         if overwrite:
             # 若允許覆寫，直接使用 pandas 的 update 方法就地更新
-            updated.update(right[shared_cols])
+            try:
+                updated.update(right[shared_cols])
+            except ValueError as e:
+                print(e)
+                updated = updated.reset_index(drop=True)
+                right = right.reset_index(drop=True)
+                updated.update(right[shared_cols])
         else:
             # 若不允許覆寫，只更新 NaN 的欄位值
             for col in shared_cols:
