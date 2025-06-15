@@ -108,6 +108,22 @@ def dfrows_iter(df, colname_list, std_dict={}, nodropcol_list=[]):
             continue
         yield [key_list, res_df]
 
+def make_series(df, column_name, ind_name="date"):
+    """
+    從 DataFrame 中抽出特定欄位，並將 date 作為 index 欄位合併輸出。
+
+    Parameters:
+        df (pd.DataFrame): 原始資料。
+        column_name (str): 欲抽取的欄位名稱。
+        date_name (str): 欲命名的日期欄位（預設為 'date'）。
+
+    Returns:
+        pd.DataFrame: 包含 date 與欄位值的新資料框。
+    """
+    result = df[column_name].copy()
+    result.index = df[ind_name]
+    return result
+
 
 def dateinterval_series(series, freq="MS"):
     date_range = pd.date_range(start=series.min(), end=series.max(), freq='MS', inclusive='both')
