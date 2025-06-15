@@ -4,7 +4,7 @@
 
 from StevenTricks import dbsqlite as db
 from StevenTricks.file_utils import PathWalk_df, xlstoxlsx, independentfilename
-from StevenTricks.dfi import dfrows_iter
+from StevenTricks.df_utils import dfrows_iter
 from StevenTricks.realestate.packet import Workdir, APfilename_dict
 from StevenTricks.tracker import logmaker
 

@@ -4,7 +4,7 @@ import pandas as pd
 import StevenTricks.db_sqlite as db
 from os.path import join
 from StevenTricks import db_path
-from StevenTricks.dfi import replace_series
+from StevenTricks.df_utils import replace_series
 
 dirname = "Examin"
 # Valuer , Examin

@@ -8,7 +8,7 @@ Created on Thu Apr 21 11:26:23 2022
 import pandas as pd
 from StevenTricks import Workdir
 from StevenTricks import db_sqlite as db
-from StevenTricks.dfi import replace_series
+from StevenTricks.df_utils import replace_series
 
 
 def valuecompare_str(io, comp_list):

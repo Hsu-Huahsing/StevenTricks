@@ -6,7 +6,7 @@ Created on Tue Dec 22 17:49:19 2020
 """
 from StevenTricks import Workdir
 from StevenTricks import db_path
-from StevenTricks.dfi import dateinterval_series, numinterval_series
+from StevenTricks.df_utils import dateinterval_series, numinterval_series
 from StevenTricks import db_sqlite as db
 from os.path import join
 
